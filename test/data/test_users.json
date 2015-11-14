@@ -1,0 +1,14 @@
+{
+  "data": [{
+      "active": true,
+      "email": "testuser1@example.com",
+      "firstName": "Test",
+      "lastName": "User1",
+      "sp_api_key_id": "6YQB0A8VXM0X8RVDPPLRHBI7J",
+      "sp_api_key_secret": "veBw/YFx56Dl0bbiVEpvbjF",
+      "lastLogin": "2015-01-07T17:26:18.996Z",
+      "created": "2015-01-07T17:26:18.995Z",
+      "picture": ""
+    }
+  ]
+}

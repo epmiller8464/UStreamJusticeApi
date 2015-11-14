@@ -1,0 +1,47 @@
+{
+  "name": "UStreamJusticeApi",
+  "version": "0.0.1",
+  "private": true,
+  "description": "New Swagger API Project",
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "main": "app.js",
+  "dependencies": {
+    "async": "^1.5.0",
+    "bunyan": "^1.5.1",
+    "compression": "^1.6.0",
+    "config": "^1.16.0",
+    "debug": "^2.2.0",
+    "express": "^4.12.3",
+    "frisby": "^0.8.5",
+    "jasmine-node": "^1.14.5",
+    "lodash": "^3.10.1",
+    "mongodb": "^2.0.48",
+    "mongoose": "^4.2.4",
+    "path": "^0.12.7",
+    "pretty-error": "^1.2.0",
+    "restify": "^4.0.3",
+    "swagger-express-mw": "^0.1.0",
+    "swagger-restify-mw": "^0.6.0",
+    "swagger-tools": "^0.9.9",
+    "util": "^0.10.3",
+    "validator": "^4.2.1",
+    "winston": "^2.1.0"
+  },
+  "devDependencies": {
+    "chance": "^0.8.0",
+    "grunt": "^0.4.5",
+    "grunt-cafe-mocha": "^0.1.13",
+    "grunt-execute": "^0.2.2",
+    "grunt-jasmine-node": "^0.3.1",
+    "grunt-mocha-test": "^0.12.7",
+    "mocha": "^2.3.3",
+    "should": "^7.1.0",
+    "supertest": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "swagger project test"
+  }
+}
