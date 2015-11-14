@@ -1,7 +1,7 @@
 'use strict';
 var util = require('util');
-var UserController = require('./user/user.controller');
-var FeedController = require('./feed/feed.controller');
+var UserController = require('./controllers/user.controller');
+var IncidentController = require('./controllers/incident.controller');
 //var stormpath = require('stormpath-sdk-express');
 
 module.exports.addAPIRouter = function (config, app, mongoose) {
@@ -24,6 +24,7 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   //var spMiddleware = stormpath.createMiddleware(spConfig);
 
   var uc = new UserController(app, mongoose);
+  var ic = new IncidentController(app, mongoose);
 
   app.use(function (req, res, next) {
     //res.contentType('application/json');
@@ -38,5 +39,10 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   app.put(PATH + '/users', uc.put);
   app.del(PATH + '/users/:email', uc.delete);
 
+  app.get(PATH + '/users', ic.get);
+  app.get(PATH + '/users/:id', ic.incidentIdGet);
+  app.post(PATH + '/users', ic.post);
+  app.put(PATH + '/users', ic.put);
+  app.del(PATH + '/users/:id', ic.delete);
   //app.use('/api/v1.0', router);
 };
