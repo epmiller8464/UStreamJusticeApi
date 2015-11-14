@@ -2,8 +2,8 @@
   "name": "UStreamJusticeApi",
   "version": "0.0.1",
   "private": true,
-  "description": "New Swagger API Project",
-  "keywords": [],
+  "description": "Swagger 2.0 API",
+  "keywords": ["rest","socket.io","webrtc"],
   "author": "",
   "license": "",
   "main": "app.js",
@@ -42,6 +42,6 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "swagger project test"
+    "test": "grunt"
   }
 }
