@@ -74,7 +74,7 @@ IncidentController.prototype.post = function (req, res, next) {
   //console.debug(util.inspect(Incident));
   var newIncident = new _IncidentModel(incident);
   res.setHeader('Content-Type', 'application/json');
-
+///TODO: validate incoming object meets min requirements.
   newIncident.save(function (err, incident) {
     if (err) {
       //_logger.error("Mongoose error creating new account for " + Incident._id);

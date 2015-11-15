@@ -107,7 +107,7 @@ module.exports = function (mongoose) {
   incidentSchema.index({description: 'text'});
   incidentSchema.index({sourceIdentity: 1}, {sparse: true});
   incidentSchema.index({incidentTarget: 1}, {sparse: true});
-
+//TODO: add validate methods
   try {
     // Throws an error if "Name" hasn't been registered
     mongoose.model("incident");
