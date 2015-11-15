@@ -24,10 +24,6 @@ var logger = new winston.Logger({
     ],
     exitOnError: false
 });
-//expressWinston.requestWhitelist = null;
-//expressWinston.bodyWhitelist = null;
-//expressWinston.bodyBlacklist = null;
-//expressWinston.responseWhitelist = null;
 
 module.exports = logger;
 module.exports.stream = {

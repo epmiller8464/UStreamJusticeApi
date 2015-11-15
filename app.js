@@ -23,17 +23,6 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 app.models = {};
 
-//
-//app.post('/hello', function create(req, res, next) {
-//  res.send(201, Math.random().toString(36).substr(3, 8));
-//  return next();
-//});
-//app.put('/hello', send);
-//app.head('/hello/:name', send);
-//app.del('hello/:name', function rm(req, res, next) {
-//  res.send(204);
-//  return next();
-//});
 require('./routes')(config, app, mongoose);
 
 // Start server

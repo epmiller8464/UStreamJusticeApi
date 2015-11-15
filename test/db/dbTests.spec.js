@@ -70,55 +70,56 @@ describe('Mongoose.MediaBundle', function () {
     });
   });
 });
-var crypto = require('crypto'),
-    fs = require('fs'),
-    key = 'mysecret key';
-describe('Crypto', function () {
-  "use strict";
-  it('hash', function () {
-// generate a hash from file stream
-
-// open file stream
-    var fstream = fs.createReadStream('./test/data/test_users.json');
-    var hash = crypto.createHash('sha512', key);
-
-    hash.update('test');
-    var value = hash.digest('hex');
-
-    // print result
-    console.log(value);
-    hash.setEncoding('hex');
-
-// once the stream is done, we read the values
-    fstream.on('end', function () {
-      hash.end();
-      // print result
-      console.log(hash.read());
-    });
-
-// pipe file to hash generator
-    fstream.pipe(hash);
-//    var crypto = require('crypto'),
-    var algorithm = 'aes-256-ctr',
-        password = 'd6F3Efeq';
-
-    function encrypt(text) {
-      var cipher = crypto.createCipher(algorithm, password);
-      var crypted = cipher.update(text, 'utf8', 'hex');
-      crypted += cipher.final('hex');
-      return crypted;
-    }
-
-    function decrypt(text) {
-      var decipher = crypto.createDecipher(algorithm, password);
-      var dec = decipher.update(text, 'hex', 'utf8');
-      dec += decipher.final('utf8');
-      return dec;
-    }
-
-    var hw = encrypt("hello world");
-    console.log(hw);
-// outputs hello world
-    console.log(decrypt(hw));
-  });
-});
+//
+//var crypto = require('crypto'),
+//    fs = require('fs'),
+//    key = 'mysecret key';
+//describe('Crypto', function () {
+//  "use strict";
+//  it('hash', function () {
+//// generate a hash from file stream
+//
+//// open file stream
+//    var fstream = fs.createReadStream('./test/data/test_users.json');
+//    var hash = crypto.createHash('sha512', key);
+//
+//    hash.update('test');
+//    var value = hash.digest('hex');
+//
+//    // print result
+//    console.log(value);
+//    hash.setEncoding('hex');
+//
+//// once the stream is done, we read the values
+//    fstream.on('end', function () {
+//      hash.end();
+//      // print result
+//      console.log(hash.read());
+//    });
+//
+//// pipe file to hash generator
+//    fstream.pipe(hash);
+////    var crypto = require('crypto'),
+//    var algorithm = 'aes-256-ctr',
+//        password = 'd6F3Efeq';
+//
+//    function encrypt(text) {
+//      var cipher = crypto.createCipher(algorithm, password);
+//      var crypted = cipher.update(text, 'utf8', 'hex');
+//      crypted += cipher.final('hex');
+//      return crypted;
+//    }
+//
+//    function decrypt(text) {
+//      var decipher = crypto.createDecipher(algorithm, password);
+//      var dec = decipher.update(text, 'hex', 'utf8');
+//      dec += decipher.final('utf8');
+//      return dec;
+//    }
+//
+//    var hw = encrypt("hello world");
+//    console.log(hw);
+//// outputs hello world
+//    console.log(decrypt(hw));
+//  });
+//});

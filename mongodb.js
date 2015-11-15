@@ -1,5 +1,6 @@
-var config = require('config');
+//var config = require('config');
 var util = require('util');
+var config = require('./config/environment');
 var credentials = require('./credentials.js');
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
