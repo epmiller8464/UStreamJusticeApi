@@ -22,30 +22,24 @@ function UsersController(app, mongoose) {
 
 UsersController.prototype.get = function (req, res, next) {
 
-  var result = new _UserModel({
-    active: true,
-    email: "testuser1@example.com",
-    firstName: "Test",
-    lastName: "User1",
-    sp_api_key_id: '6YQB0A8VXM0X8RVDPPLRHBI7J',
-    sp_api_key_secret: 'veBw/YFx56Dl0bbiVEpvbjF',
-    lastLogin: Date("2015-01-07T17:26:18.996Z"),
-    created: Date("2015-01-07T17:26:18.995Z"),
-    picture: "",
-  });
-  //var result = mockUser;
-  //var result = require('../mocks/User')(_mongoose).mockUser;
-  //result.save(function(err){
-  //  console.log(err);
-  //});
-  if (typeof result !== 'undefined') {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(result);
-  }
-  else
-    res.send({message: "error"});
+  var errStr = null;
+  var statusCode = 200;
+  var jsonResult = null;
 
-  return next();
+  _UserModel.find(function (err, users) {
+
+    if (err) {
+      errStr = err.message;
+      statusCode = 400;
+      jsonResult = {message: "error", error: errStr};
+    }
+    else {
+      jsonResult = users;
+    }
+    res.send(statusCode, jsonResult);
+    return next();
+  });
+
 };
 
 UsersController.prototype.userIdGet = function (req, res, next) {

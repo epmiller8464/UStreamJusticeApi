@@ -8,15 +8,12 @@ var helper = require('../../helpers/TestHelper');
 var config = require('../../../config/environment');
 
 var controllerName = "users";
-var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version,controllerName);
+var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version, controllerName);
 console.log(PATH);
-var userCount = 5;
-var users = helper.getRandomUsers(userCount);
-
-console.log('users count %s', users.length);
-//console.log(util.inspect(users));
-assert.equal(userCount, users.length);
-userCount.should.eql(users.length);
+var count = 5;
+var users = helper.getRandomUsers(count);
+assert.equal(count, users.length);
+count.should.eql(users.length);
 
 
 describe('POST /users', function () {
@@ -61,6 +58,24 @@ describe('POST /users', function () {
 });
 
 describe('GET /users', function () {
+
+  it('should return all users', function (done) {
+    "use strict";
+    //console.log(mockUser);
+    request(server)
+        .get(PATH)
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          assert.equal(res.statusCode, 200);
+          should.not.exist(err);
+          var result = res.body;
+          //console.log(result);
+          should.notEqual(result, undefined);
+          result.should.be.instanceof(Array);
+          done();
+        });
+  });
+
   users.forEach(function createUser(user, index, array) {
     it('should return a user matching the email param', function (done) {
       "use strict";
