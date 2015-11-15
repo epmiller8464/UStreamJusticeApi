@@ -1,7 +1,7 @@
 'use strict';
 var util = require('util');
-var UserController = require('./controllers/user.controller');
-var IncidentController = require('./controllers/incident.controller');
+var UserController = require('./controllers/users.controller.js');
+var IncidentController = require('./controllers/incidents.controller.js');
 //var stormpath = require('stormpath-sdk-express');
 
 module.exports.addAPIRouter = function (config, app, mongoose) {
@@ -10,17 +10,17 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   var models = require('./models/models')(mongoose);
   app.models = models;
 
-  var spConfig = {
-    //appHref: config.sp.STORMPATH_APP_HREF,
-    //apiKeyId: config.sp.STORMPATH_API_KEY_ID,
-    //apiKeySecret: config.sp.STORMPATH_API_KEY_SECRET,
-    writeAccessTokenResponse: true,
-    //writeAccessTokenResponse: false,
-    //endOnError: false,
-    allowedOrigins: ['http://localhost:3000',
-      'https://localhost:3000',
-      'http://localhost']
-  };
+  //var spConfig = {
+  //  //appHref: config.sp.STORMPATH_APP_HREF,
+  //  //apiKeyId: config.sp.STORMPATH_API_KEY_ID,
+  //  //apiKeySecret: config.sp.STORMPATH_API_KEY_SECRET,
+  //  writeAccessTokenResponse: true,
+  //  //writeAccessTokenResponse: false,
+  //  //endOnError: false,
+  //  allowedOrigins: ['http://localhost:3000',
+  //    'https://localhost:3000',
+  //    'http://localhost']
+  //};
   //var spMiddleware = stormpath.createMiddleware(spConfig);
 
   var uc = new UserController(app, mongoose);
@@ -31,18 +31,20 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
     next();
   });
 
-  var PATH = util.format('/%s/%s',config.api.basePATH,config.api.version);
+  var PATH = util.format('/%s/%s', config.api.basePATH, config.api.version);
+  var directPath = util.format('%s/%s', PATH, uc.path);
+  app.get(directPath, uc.get);
+  app.get(directPath + '/:email', uc.userIdGet);
+  app.post(directPath, uc.post);
+  app.put(directPath, uc.put);
+  app.del(directPath + '/:email', uc.delete);
 
-  app.get(PATH + '/users', uc.get);
-  app.get(PATH + '/users/:email', uc.userIdGet);
-  app.post(PATH + '/users', uc.post);
-  app.put(PATH + '/users', uc.put);
-  app.del(PATH + '/users/:email', uc.delete);
+  directPath = util.format('%s/%s', PATH, ic.path);
 
-  app.get(PATH + '/users', ic.get);
-  app.get(PATH + '/users/:id', ic.incidentIdGet);
-  app.post(PATH + '/users', ic.post);
-  app.put(PATH + '/users', ic.put);
-  app.del(PATH + '/users/:id', ic.delete);
+  app.get(directPath, ic.get);
+  app.get(directPath + '/:id', ic.incidentIdGet);
+  app.post(directPath, ic.post);
+  app.put(directPath, ic.put);
+  app.del(directPath + '/:id', ic.delete);
   //app.use('/api/v1.0', router);
 };

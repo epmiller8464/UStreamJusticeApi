@@ -13,9 +13,11 @@ module.exports = IncidentController;
 
 //function IncidentController(app, stormpath, mongoose) {
 function IncidentController(app, mongoose) {
+  var self = this;
   _mongoose = mongoose;
   _models = app.models;//require('../models/models')(mongoose);
   _IncidentModel = _models.IncidentModel;
+  self.path = 'incidents';
 }
 
 

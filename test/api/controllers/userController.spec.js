@@ -6,7 +6,9 @@ var server = require('../../../app');
 var chance = require('chance')();
 var helper = require('../../helpers/TestHelper');
 var config = require('../../../config/environment');
-var PATH = util.format('/%s/%s', config.api.basePATH, config.api.version);
+
+var controllerName = "users";
+var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version,controllerName);
 console.log(PATH);
 var userCount = 5;
 var users = helper.getRandomUsers(userCount);
@@ -23,7 +25,7 @@ describe('POST /users', function () {
     it('should add a new user', function (done) {
 
       request(server)
-          .post(PATH + '/users')
+          .post(PATH)
           .type('application/json')
           .send(user)
           .end(function (err, res) {
@@ -42,7 +44,7 @@ describe('POST /users', function () {
     it('should return statusCode === 400; an error inserting duplicate users', function (done) {
 
       request(server)
-          .post(PATH + '/users')
+          .post(PATH)
           .type('application/json')
           .send(user)
           .end(function (err, res) {
@@ -64,7 +66,7 @@ describe('GET /users', function () {
       "use strict";
       //console.log(mockUser);
       request(server)
-          .get(PATH + '/users/' + user.email)
+          .get(PATH + '/' + user.email)
           .set('Accept', 'application/json')
           .end(function (err, res) {
             assert.equal(res.statusCode, 200);
@@ -84,7 +86,7 @@ describe('GET /users', function () {
     "use strict";
     //console.log(mockUser);
     request(server)
-        .get(PATH + '/users/fakeemail')
+        .get(PATH + '/fakeemail')
         .set('Accept', 'application/json')
         .end(function (err, res) {
           assert.equal(res.statusCode, 400);
@@ -108,7 +110,7 @@ describe('PUT /users', function () {
       var newImgUrl = user.picture = chance.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']});
 
       request(server)
-          .put(PATH + '/users')
+          .put(PATH)
           .type('application/json')
           .send(user)
           .end(function (err, res) {
@@ -132,7 +134,7 @@ describe('DELETE /users', function () {
 
     it('should update an existing user', function (done) {
       request(server)
-          .delete(PATH + '/users/' + user.email)
+          .delete(PATH + '/' + user.email)
           .end(function (err, res) {
             assert.equal(res.statusCode, 200);
             var result = res.body;

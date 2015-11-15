@@ -1,5 +1,5 @@
-curl -H "Content-Type: application/json" -X POST -d '{"active" : true,"email" : "testuser1@example.com","firstName" : "Test","lastName" : "User1","sp_api_key_id" : "6YQB0A8VXM0X8RVDPPLRHBI7J","sp_api_key_secret" : "veBw/YFx56Dl0bbiVEpvbjF","picture" : "","lastLogin" : "2015-11-12T03:20:54Z","created" : "2015-11-12T03:20:54Z"}' 'http://localhost:9000/v1/users'
+curl -H "Content-Type: application/json" -X POST -d '{"active" : true,"email" : "testuser1@example.com","firstName" : "Test","lastName" : "User1","sp_api_key_id" : "6YQB0A8VXM0X8RVDPPLRHBI7J","sp_api_key_secret" : "veBw/YFx56Dl0bbiVEpvbjF","picture" : "","lastLogin" : "2015-11-12T03:20:54Z","created" : "2015-11-12T03:20:54Z"}' 'http://localhost:9000/api/v1/users'
 
-curl -H "Content-Type: application/json" -X PUT -d '{"active" : true,"email" : "testuser5@example.com","firstName" : "Test","lastName" : "User1","sp_api_key_id" : "6YQB0A8VXM0X8RVDPPLRHBI7J","sp_api_key_secret" : "veBw/YFx56Dl0bbiVEpvbjF","picture" : "tmp.jpeg","lastLogin" : "2015-11-12T03:20:54Z","created" : "2015-11-12T03:20:54Z"}' 'http://localhost:9000/v1/users' -i
+curl -H "Content-Type: application/json" -X PUT -d '{"active" : true,"email" : "testuser5@example.com","firstName" : "Test","lastName" : "User1","sp_api_key_id" : "6YQB0A8VXM0X8RVDPPLRHBI7J","sp_api_key_secret" : "veBw/YFx56Dl0bbiVEpvbjF","picture" : "tmp.jpeg","lastLogin" : "2015-11-12T03:20:54Z","created" : "2015-11-12T03:20:54Z"}' 'http://localhost:9000/api/v1/users' -i
 
-curl -H "Content-Type: application/json" -X GET 'http://localhost:9000/v1/users/fakeemail'
+curl -H "Content-Type: application/json" -X GET 'http://localhost:9000/api/v1/users/fakeemail' -i
