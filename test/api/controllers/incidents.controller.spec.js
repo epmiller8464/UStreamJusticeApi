@@ -29,7 +29,7 @@ describe(testDescription, function () {
             var result = res.body;
             should.notEqual(result, undefined);
             result.should.have.property('_id');
-            //result.email.should.eql(user.email);
+            //result.email.should.eql(incident.email);
             done();
           });
     });
@@ -56,7 +56,7 @@ testDescription = util.format('GET/%s', controllerName);
 
 describe(testDescription, function () {
 
-  it('should return all users', function (done) {
+  it('should return all incidents', function (done) {
     "use strict";
     //console.log(mockUser);
     request(server)
@@ -116,17 +116,19 @@ describe(testDescription, function () {
 
 
 
-//describe('PUT /users', function () {
-//  //console.log(array[index]);
-//  users.forEach(function createUser(user, index, array) {
+testDescription = util.format('PUT/%s', controllerName);
 //
-//    it('should update an existing user', function (done) {
-//      var newImgUrl = user.picture = chance.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']});
+//describe(testDescription, function () {
+//  //console.log(array[index]);
+//  data.forEach(function(incident, index, array) {
+//
+//    it('should update an existing incident', function (done) {
+//      var newImgUrl = incident.picture = chance.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']});
 //
 //      request(server)
 //          .put(PATH)
 //          .type('application/json')
-//          .send(user)
+//          .send(incident)
 //          .end(function (err, res) {
 //            assert.equal(res.statusCode, 200);
 //            var result = res.body;
@@ -134,7 +136,7 @@ describe(testDescription, function () {
 //            //console.log(result);
 //            should.notEqual(result, undefined);
 //            result.should.have.property('_id');
-//            //result._id.toString().should.eql(user._id.toString());
+//            //result._id.toString().should.eql(incident._id.toString());
 //            result.picture.should.eql(newImgUrl);
 //            done();
 //          });
@@ -142,13 +144,13 @@ describe(testDescription, function () {
 //  });
 //});
 //
-//describe('DELETE /users', function () {
+//describe('DELETE /incidents', function () {
 //  //console.log(array[index]);
-//  users.forEach(function createUser(user, index, array) {
+//  incidents.forEach(function createUser(incident, index, array) {
 //
-//    it('should update an existing user', function (done) {
+//    it('should update an existing incident', function (done) {
 //      request(server)
-//          .delete(PATH + '/' + user.email)
+//          .delete(PATH + '/' + incident.email)
 //          .end(function (err, res) {
 //            assert.equal(res.statusCode, 200);
 //            var result = res.body;

@@ -3,9 +3,12 @@
  */
 
 
+var c = require('chance')();
 var should = require('should');
 var assert = require('assert');
 var util = require('util');
+var app = require('../../app');
+var models = app.models;
 var helper = require('../helpers/TestHelper');
 var count = 5;
 var users = helper.getRandomUsers(count);
@@ -22,7 +25,39 @@ describe('Mongoose.User', function () {
       });
     });
   });
+
+  it('update user', function () {
+
+    users.forEach(function (user, index, array) {
+      var condition = {'_id': user._id};
+      var updates = {
+        'verified': true,
+        'phone': c.phone(),
+        'sp_api_key_id': c.hash(),
+        'sp_api_key_secret': c.hash(),
+        'lastLogin': Date.now(),
+        'picture': c.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']})
+      };
+      //console.log('updates: ',updates);
+      models.UserModel.update(condition/*condition*/, updates/*field updates*/, {upsert: true}/*etc*/, function (err, raw) {
+
+        should.not.exist(err);
+        assert.notEqual(raw, undefined);
+        assert.notEqual(raw, null);
+        console.log(raw);
+        models.UserModel.findOne({'_id': user._id}, function (err, updatedUser) {
+          should.not.exist(err);
+          assert.notEqual(updatedUser, undefined);
+          assert.notEqual(updatedUser, null);
+          user.lastLogin.should.be.lessThan(updatedUser.lastLogin);
+          //console.log('existing: ', user);
+          //console.log('updated: ', updatedUser);
+        });
+      });
+    });
+  });
 });
+
 
 var locs = helper.getRandomLocations(count);
 

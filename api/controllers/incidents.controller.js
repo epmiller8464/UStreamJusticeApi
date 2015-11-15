@@ -106,8 +106,6 @@ IncidentController.prototype.delete = function (req, res, next) {
   var errStr = null;
   var statusCode = 200;
   var jsonResult = null;
-  //console.log(util.inspect(_Incident));
-  //var newIncident = new _IncidentModel(Incident);
   var _id = req.params['id'];
 
   _IncidentModel.findOne({'_id': _id}, function (err, incident) {
@@ -136,7 +134,7 @@ IncidentController.prototype.delete = function (req, res, next) {
       //jsonResult = Incident;
       //res.send(Incident);
       //var newIncident = new _IncidentModel({
-      Incident.remove(function (err, incident) {
+      incident.remove(function (err, delIncident) {
         if (err) {
           errStr = err.message;
           //res.status(400);
@@ -145,9 +143,7 @@ IncidentController.prototype.delete = function (req, res, next) {
         } else {
           //_logger.debug("Successfully added incident object for " + Incident._id);
           statusCode = 200;
-          //res.json(Incident);
-          //
-          jsonResult = Incident;
+          jsonResult = delIncident;
         }
         res.send(statusCode, jsonResult);
 
@@ -181,7 +177,7 @@ IncidentController.prototype.put = function (req, res, next) {
   //console.log(util.inspect(_Incident));
   //var newIncident = new _IncidentModel(Incident);
 
-  _incidentModel.findOne({'_id': _id}, function (err, incident) {
+  _IncidentModel.findOne({'_id': _id}, function (err, incident) {
     if (err) {
       errStr = err.message;
       //res.status(400);
@@ -206,16 +202,6 @@ IncidentController.prototype.put = function (req, res, next) {
       statusCode = 200;
       //jsonResult = Incident;
       //res.send(Incident);
-      //var newIncident = new _IncidentModel({
-      incident.active = _incident.active;
-      incident._id = _incident._id;
-      incident.firstName = _incident.firstName;
-      incident.lastName = _incident.lastName;
-      incident.sp_api_key_id = _incident.sp_api_key_id;
-      incident.sp_api_key_secret = _incident.sp_api_key_secret;
-      incident.created = _incident.created;
-      incident.lastLogin = _incident.lastLogin;
-      incident.picture = _incident.picture;
       incident.save(function (err, incident) {
         if (err) {
           errStr = err.message;

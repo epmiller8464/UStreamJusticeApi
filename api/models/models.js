@@ -18,7 +18,7 @@ module.exports = function (mongoose) {
     //TODO:use local api keys
     sp_api_key_secret: {type: String, trim: true},
     created: {type: Date, default: Date.now},
-    lastLogin: {type: Date, default: Date.now},
+    lastLogin: {type: Number, default: Date.now()},
     picture: {type: String, trim: true},
     contacts: [{firstName: String, lastName: String, phone: String, email: String}]
   }, {collection: 'user'});

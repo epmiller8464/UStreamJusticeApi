@@ -26,7 +26,7 @@ var TestDataHelper = {
         phone: c.phone(),
         sp_api_key_id: c.hash(),
         sp_api_key_secret: c.hash(),
-        lastLogin: Date(),
+        lastLogin: Date.now(),
         created: Date(),
         picture: c.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']})
       }));
