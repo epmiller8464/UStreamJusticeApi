@@ -156,77 +156,26 @@ UsersController.prototype.put = function (req, res, next) {
   var jsonResult = null;
   var _user = req.body;
   var email = _user.email;
-  //console.log(util.inspect(_user));
-  //var newUser = new _UserModel(user);
+  var condition = {'email': email};
+  delete _user._id;
+  var updates = _user;
+  //console.log('updates: ',updates);
+  _UserModel.update(condition/*condition*/, updates/*field updates*/, {upsert: true}/*etc*/, function (err, raw) {
 
-  _UserModel.findOne({'email': email}, function (err, user) {
     if (err) {
       errStr = err.message;
-      //res.status(400);
       statusCode = 400;
       jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-      return next();
-
-    } else if (typeof user === 'undefined' || user === null) {
-
-      errStr = util.format('user with email:%s could not be found.', email);
-      //res.status(400);
-      statusCode = 400;
-
-      jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-
-      return next();
-
     } else {
-      //res.status(200);
+      //_logger.debug("Successfully added User object for " + user.email);
       statusCode = 200;
-      //jsonResult = user;
-      //res.send(user);
-      //var newUser = new _UserModel({
-      user.active = _user.active;
-      user.email = _user.email;
-      user.firstName = _user.firstName;
-      user.lastName = _user.lastName;
-      user.sp_api_key_id = _user.sp_api_key_id;
-      user.sp_api_key_secret = _user.sp_api_key_secret;
-      user.created = _user.created;
-      user.lastLogin = _user.lastLogin;
-      user.picture = _user.picture;
-      user.save(function (err, user) {
-        if (err) {
-          errStr = err.message;
-          //res.status(400);
-          statusCode = 400;
-          jsonResult = {message: "error", error: errStr};
-        } else {
-          //_logger.debug("Successfully added User object for " + user.email);
-          statusCode = 200;
-          //res.json(user);
-          //
-          jsonResult = user;
-        }
-        res.send(statusCode, jsonResult);
-
-        return next();
-      });
+      jsonResult = raw;
     }
+    res.send(statusCode, jsonResult);
+
+    return next();
+
   });
-
-
-  //var newUser = new _UserModel({
-  //  active: user.active,
-  //  email: user.email,
-  //  firstName: user.firstName,
-  //  lastName: user.lastName,
-  //  sp_api_key_id: user.sp_api_key_id,
-  //  sp_api_key_secret: user.sp_api_key_secret,
-  //  created: user.created,
-  //  lastLogin: user.lastLogin,
-  //  picture: user.picture
-  //});
-
 };
 
 //module.exports = UsersController;

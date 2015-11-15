@@ -131,12 +131,9 @@ describe('PUT /users', function () {
           .end(function (err, res) {
             assert.equal(res.statusCode, 200);
             var result = res.body;
-            //console.log(res.statusCode);
-            //console.log(result);
             should.notEqual(result, undefined);
-            result.should.have.property('_id');
-            //result._id.toString().should.eql(user._id.toString());
-            result.picture.should.eql(newImgUrl);
+            result.should.have.property('ok');
+            result.ok.should.eql(1);
             done();
           });
     });
