@@ -22,18 +22,25 @@ function IncidentController(app, mongoose) {
 
 
 IncidentController.prototype.get = function (req, res, next) {
-  //var IncidentId = req.swagger.params['Incident-id'].value;
 
-  var result = new _IncidentModel({});
+  var errStr = null;
+  var statusCode = 200;
+  var jsonResult = null;
 
-  if (typeof result !== 'undefined') {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(result);
-  }
-  else
-    res.send({message: "error"});
+  _IncidentModel.find(function (err, incidents) {
 
-  return next();
+    if (err) {
+      errStr = err.message;
+      statusCode = 400;
+      jsonResult = {message: "error", error: errStr};
+    }
+    else {
+      jsonResult = incidents;
+    }
+    res.send(statusCode, jsonResult);
+    return next();
+  });
+
 };
 
 IncidentController.prototype.incidentIdGet = function (req, res, next) {

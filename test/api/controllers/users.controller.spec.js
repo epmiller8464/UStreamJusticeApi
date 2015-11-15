@@ -10,7 +10,7 @@ var config = require('../../../config/environment');
 var controllerName = "users";
 var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version, controllerName);
 console.log(PATH);
-var count = 5;
+var count = 1;
 var users = helper.getRandomUsers(count);
 assert.equal(count, users.length);
 count.should.eql(users.length);
