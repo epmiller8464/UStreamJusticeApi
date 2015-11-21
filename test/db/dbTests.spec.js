@@ -10,7 +10,7 @@ var util = require('util');
 var app = require('../../app');
 var models = app.models;
 var helper = require('../helpers/TestHelper');
-var count = 2;
+var count = 1;
 var users = helper.getRandomUsers(count);
 
 describe('Mongoose.User', function () {
@@ -39,7 +39,7 @@ describe('Mongoose.User', function () {
     var updates = {
       lastLogin: Date.now(),
       email: 'asfa@g',
-      lastName:''
+      lastName: ''
     };
 
     models.UserModel.update(condition/*condition*/, updates/*field updates*/, {
@@ -117,21 +117,34 @@ describe('Mongoose.IncidentLocation', function () {
   });
 });
 //
-//var incidents = helper.getRandomIncidents(count);
-//describe('Mongoose.Incident', function () {
-//  "use strict";
-//  it('Add new incident', function () {
-//
-//    incidents.forEach(function (incident, index, array) {
-//      //console.log(incident);
-//      incident.save(function (err, i) {
-//        should.not.exist(err);
-//        assert.notEqual(i, undefined);
-//        assert.notEqual(i, null);
-//      });
-//    });
-//  });
-//});
+var incidents = helper.getRandomIncidents(count);
+describe('Mongoose.Incident', function () {
+  "use strict";
+  it('Add new incident', function () {
+
+    incidents.forEach(function (incident, index, array) {
+      //console.log(incident);
+      incident.save(function (err, i) {
+        should.not.exist(err);
+        assert.notEqual(i, undefined);
+        assert.notEqual(i, null);
+        var sn = i.toObject();
+        var snapshot = models.IncidentSnapshotModel(sn);
+        snapshot.save(function (err, snap) {
+          should.not.exist(err);
+
+        });
+      });
+      //var toObject = incident.toObject();
+      //toObject.snapshottime = Date.now();
+      //console.log('snapshot OBJECT: %s',util.inspect(toObject));
+      //var toJSON = incident.toJSON();
+      //toJSON.snapshottime = Date.now();
+      //console.log('snapshot JSON: %s',util.inspect(toJSON));
+
+    });
+  });
+});
 //
 //var mediaBundles = helper.getRandonMediaBundles(incidents);
 //describe('Mongoose.MediaBundle', function () {

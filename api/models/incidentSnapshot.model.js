@@ -1,19 +1,16 @@
+//TODO: add validation pre save
 module.exports = function (mongoose) {
   'use strict';
   var Model;
   /*
    *@TODO: add validation pre save
-   *@TODO:use api key index unique key
    */
 
-  var incidentSchema = new mongoose.Schema({
+  var incidentSnapshotSchema = new mongoose.Schema({
         state: {
-          type: String, required: true,
-          enum: ['New', 'Live', 'Complete', 'Closed', 'Cancelled'],
-          default: 'New'
+          type: String, required: true
         },
         location: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
-        //locations: {type: [{lat: Number, long: Number}]},
         categoryType: {type: String, trim: true, uppercase: true},
         incidentDate: {type: Date, default: Date.now},
         /*
@@ -25,40 +22,30 @@ module.exports = function (mongoose) {
         sourceIdentity: {type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
         sourceType: {
           type: String,
-          enum: ['VICTIM', 'WITNESS'],
-          default: 'VICTIM',
-          required: true
         },
         incidentTarget: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         tags: {type: [String], index: true}, // field level
         description: {type: String, trim: true},
         //incidentHistory: {type: []},
-        mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'}
+        mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
+        snapshotTime: {type: Number, required: true, default: Date.now()}
       },
-      {collection: 'incident'}
+      {collection: 'incidentSnapshot'}
   );
 
-  incidentSchema.index({state: 1});
-  incidentSchema.index({categoryType: 'text'});
-  incidentSchema.index({tags: 'text'});
-  incidentSchema.index({description: 'text'});
-  incidentSchema.index({sourceIdentity: 1}, {sparse: true});
-  incidentSchema.index({incidentTarget: 1}, {sparse: true});
-
-
-  incidentSchema.methods.toSnapshot = function(){
-    var snapshot = this.toObject();
-
-    return snapshot;
-  };
-
+  incidentSnapshotSchema.index({state: 1});
+  incidentSnapshotSchema.index({categoryType: 'text'});
+  incidentSnapshotSchema.index({tags: 'text'});
+  incidentSnapshotSchema.index({description: 'text'});
+  incidentSnapshotSchema.index({sourceIdentity: 1}, {sparse: true});
+  incidentSnapshotSchema.index({incidentTarget: 1}, {sparse: true});
 
 //TODO: add validate methods
   try {
     // Throws an error if "Name" hasn't been registered
-    mongoose.model("incident");
+    mongoose.model("incidentSnapshot");
   } catch (e) {
-    Model = mongoose.model('incident', incidentSchema);
+    Model = mongoose.model('incidentSnapshot', incidentSnapshotSchema);
   }
   return Model;
 };
