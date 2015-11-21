@@ -130,10 +130,15 @@ describe('Mongoose.Incident', function () {
         assert.notEqual(i, null);
         var sn = i.toObject();
         var snapshot = models.IncidentSnapshotModel(sn);
-        snapshot.save(function (err, snap) {
-          should.not.exist(err);
 
-        });
+          console.log(util.inspect(snapshot));
+        for(var field in snapshot){
+          console.log(util.inspect(field),snapshot[field]);
+        }
+        //snapshot.save(function (err, snap) {
+        //  should.not.exist(err);
+        //
+        //});
       });
       //var toObject = incident.toObject();
       //toObject.snapshottime = Date.now();
