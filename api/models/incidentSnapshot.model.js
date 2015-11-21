@@ -7,29 +7,21 @@ module.exports = function (mongoose) {
    */
 
   var incidentSnapshotSchema = new mongoose.Schema({
-        state: {
-          type: String, required: true
-        },
+        state: {type: String},
         location: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
         categoryType: {type: String, trim: true, uppercase: true},
-        incidentDate: {type: Date, default: Date.now},
-        /*
-         * @precise time in milliseconds
-         * */
-        hammertime: {type: Number, required: true, default: Date.now()},
+        incidentDate: {type: Date},
+        hammertime: {type: Number},
         endHammertime: {type: Number},
-        lastModified: {type: Number, required: true, default: Date.now()},
-        sourceIdentity: {type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
-        sourceType: {
-          type: String,
-        },
+        lastModified: {type: Number},
+        sourceIdentity: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+        sourceType: {type: String},
         incidentTarget: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         tags: {type: [String], index: true}, // field level
         description: {type: String, trim: true},
-        //incidentHistory: {type: []},
         mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
-        snapshotTime: {type: Number, required: true, default: Date.now()},
-        incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', require: true},
+        snapshotTime: {type: Number},
+        incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', required: true}
       },
       {collection: 'incidentSnapshot'}
   );

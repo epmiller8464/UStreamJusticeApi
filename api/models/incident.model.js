@@ -1,5 +1,18 @@
 var assert = require('assert');
 var u = require('util');
+//  var IncidentStates = {
+//    NEW: 'NEW',
+//    LIVE: 'LIVE',
+//    COMPLETE: 'COMPLETE',
+//    CLOSED: 'CLOSED',
+//    CANCELLED: 'CANCELLED'
+//  };
+//  var SourceTypes = {
+//    VICTIM: 'VICTIM', WITNESS: 'WITNESS'
+//  };
+//module.exports = IncidentStates;
+//module.exports = SourceTypes;
+var enums = require('./enums.model');
 module.exports = function (mongoose) {
   'use strict';
   var Model;
@@ -10,9 +23,9 @@ module.exports = function (mongoose) {
 
   var incidentSchema = new mongoose.Schema({
         state: {
-          type: String, required: true,
-          enum: ['New', 'Live', 'Complete', 'Closed', 'Cancelled'],
-          default: 'New'
+          type: String, required: true, uppercase: true,
+          enum: Object.keys(enums.IncidentStates),
+          default: enums.IncidentStates.NEW
         },
         location: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
         //locations: {type: [{lat: Number, long: Number}]},
@@ -27,9 +40,10 @@ module.exports = function (mongoose) {
         sourceIdentity: {type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
         sourceType: {
           type: String,
-          enum: ['VICTIM', 'WITNESS'],
-          default: 'VICTIM',
-          required: true
+          enum: Object.keys(enums.SourceTypes),
+          default: enums.SourceTypes.VICTIM,
+          required: true,
+          uppercase: true
         },
         incidentTarget: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         tags: {type: [String], index: true}, // field level
@@ -54,7 +68,7 @@ module.exports = function (mongoose) {
 
   incidentSchema.methods.toSnapshot = function (virtuals) {
     //var snapshot = this.toObject({virtuals: includeVirtuals || true});
-    var options = {virtuals: u.isBoolean(virtuals) ? virtuals : true};
+    var options = {versionKey: false, virtuals: u.isBoolean(virtuals) ? virtuals : true};
     //console.log(options);
     var snapshot = this.toObject(options);
     if (options.virtuals)
@@ -66,7 +80,7 @@ module.exports = function (mongoose) {
   };
 
   incidentSchema.methods.toDiffSnapshot = function (snapshot) {
-    var self = this.toSnapshot(false);
+    var self = this.toSnapshot();
     var diffs = [];
 
     for (var field in self) {
@@ -75,11 +89,13 @@ module.exports = function (mongoose) {
       //if ((curr && snField) && curr.toString() !== snField.toString()) {
 
       if ((curr && snField) && curr.toString() !== snField.toString()) {
-        diffs[field] = snField;//snapshot[field];
-        //console.log(field, curr, snField);
-      } else if (!snField) {
-        diffs[field] = snField;//snapshot[field];
-        //console.log(field, curr, snField);
+        diffs[field] = curr;
+      } else if ((!snField && curr)|| (snField && !curr)) {
+        diffs[field] = curr;
+      }
+      var pt = incidentSchema.pathType(field);
+      if (pt === 'virtual') {
+        diffs[field] = this[field];
       }
     }
     //console.log(snapshot._id);
