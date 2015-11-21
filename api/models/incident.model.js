@@ -1,3 +1,5 @@
+var assert = require('assert');
+var u = require('util');
 module.exports = function (mongoose) {
   'use strict';
   var Model;
@@ -46,12 +48,45 @@ module.exports = function (mongoose) {
   incidentSchema.index({incidentTarget: 1}, {sparse: true});
 
 
-  incidentSchema.methods.toSnapshot = function(){
-    var snapshot = this.toObject();
+  incidentSchema.virtual('incidentId').get(function () {
+    return this.id;
+  });
 
+  incidentSchema.methods.toSnapshot = function (virtuals) {
+    //var snapshot = this.toObject({virtuals: includeVirtuals || true});
+    var options = {virtuals: u.isBoolean(virtuals) ? virtuals : true};
+    //console.log(options);
+    var snapshot = this.toObject(options);
+    if (options.virtuals)
+      assert.equal(snapshot.incidentId, this._id);
+    delete snapshot.id;
+    delete snapshot._id;
+    assert.equal(snapshot.id, undefined);
     return snapshot;
   };
 
+  incidentSchema.methods.toDiffSnapshot = function (snapshot) {
+    var self = this.toSnapshot(false);
+    var diffs = [];
+
+    for (var field in self) {
+      var curr = self[field],// ? self[field].toString() : '',
+          snField = snapshot[field];// ? snapshot[field].toString() : '';
+      //if ((curr && snField) && curr.toString() !== snField.toString()) {
+
+      if ((curr && snField) && curr.toString() !== snField.toString()) {
+        diffs[field] = snField;//snapshot[field];
+        //console.log(field, curr, snField);
+      } else if (!snField) {
+        diffs[field] = snField;//snapshot[field];
+        //console.log(field, curr, snField);
+      }
+    }
+    //console.log(snapshot._id);
+    //console.log(diffs.length);
+    //console.log(this.inspect());
+    return diffs;
+  };
 
 //TODO: add validate methods
   try {

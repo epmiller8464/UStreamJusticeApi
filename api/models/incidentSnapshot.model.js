@@ -28,7 +28,8 @@ module.exports = function (mongoose) {
         description: {type: String, trim: true},
         //incidentHistory: {type: []},
         mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
-        snapshotTime: {type: Number, required: true, default: Date.now()}
+        snapshotTime: {type: Number, required: true, default: Date.now()},
+        incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', require: true},
       },
       {collection: 'incidentSnapshot'}
   );

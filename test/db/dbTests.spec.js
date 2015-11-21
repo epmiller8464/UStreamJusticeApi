@@ -120,25 +120,30 @@ describe('Mongoose.IncidentLocation', function () {
 var incidents = helper.getRandomIncidents(count);
 describe('Mongoose.Incident', function () {
   "use strict";
-  it('Add new incident', function () {
-
-    incidents.forEach(function (incident, index, array) {
+  incidents.forEach(function (incident, index, array) {
+    it('Add new incident', function (done) {
       //console.log(incident);
+      var sn = incident.toObject();
+      var snapshot = models.IncidentSnapshotModel(sn);
       incident.save(function (err, i) {
         should.not.exist(err);
         assert.notEqual(i, undefined);
         assert.notEqual(i, null);
-        var sn = i.toObject();
-        var snapshot = models.IncidentSnapshotModel(sn);
-
-          console.log(util.inspect(snapshot));
-        for(var field in snapshot){
-          console.log(util.inspect(field),snapshot[field]);
-        }
-        //snapshot.save(function (err, snap) {
-        //  should.not.exist(err);
+        assert.equal(incident, i);
+        //var diffs = [];
+        //var toObject = i.toObject();
+        //for (var field in snapshot._doc) {
+        //  var curr = toObject[field],
+        //      snField = snapshot._doc[field];
         //
-        //});
+        //  //if ((curr && snField) && curr.toString() !== snField.toString()) {
+        //  if ((curr && snField) && curr.toString() !== snField.toString()) {
+        //    diffs[field] = snField;
+        //    console.log(field, curr, snField);
+        //  }
+        //}
+        //console.log(diffs.length);
+        done();
       });
       //var toObject = incident.toObject();
       //toObject.snapshottime = Date.now();
@@ -147,6 +152,40 @@ describe('Mongoose.Incident', function () {
       //toJSON.snapshottime = Date.now();
       //console.log('snapshot JSON: %s',util.inspect(toJSON));
 
+    });
+
+    it('update an existing incident', function (done) {
+
+      var sn = incident.toSnapshot(null);
+      sn = incident.toSnapshot(undefined);
+      sn = incident.toSnapshot(false);
+      console.log(sn);
+      //sn.should.have.property('incidentId');
+      incident.description = 'test update';
+      //var updates = {
+      //  description: c.paragraph()
+      //};
+      //models.IncidentModel.update(condition/*condition*/, updates/*field updates*/, {
+      incident.update(incident, {runValidators: true}/*etc*/, function (err, raw) {
+        should.not.exist(err);
+        assert.notEqual(raw, undefined);
+        assert.notEqual(raw, null);
+
+        models.IncidentModel.findOne({'_id': incident._id}, function (err, update) {
+          should.not.exist(err);
+          assert.notEqual(update, undefined);
+          assert.notEqual(update, null);
+          incident.description.should.be.eql(update.description);
+          sn.description.should.be.not.eql(update.description);
+
+          var diff = update.toDiffSnapshot(sn);
+          console.log(diff);
+          //console.log(sn);
+          models.IncidentSnapshotModel(diff);
+          //incident.email.should.eql(updatedIncident.email);
+          done();
+        });
+      });
     });
   });
 });
