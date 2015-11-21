@@ -21,6 +21,7 @@ module.exports = function (grunt) {
           clearRequireCache: false // Optionally clear the require cache before running tests (defaults to false)
         },
         src: ['test/*.spec.js','test/db/*.spec.js','test/api/controllers/*.spec.js']
+        //src: ['test/db/*.spec.js']
       }
     }
   });

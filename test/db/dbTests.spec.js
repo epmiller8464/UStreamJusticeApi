@@ -10,78 +10,104 @@ var util = require('util');
 var app = require('../../app');
 var models = app.models;
 var helper = require('../helpers/TestHelper');
-var count = 5;
+var count = 2;
 var users = helper.getRandomUsers(count);
 
 describe('Mongoose.User', function () {
   "use strict";
-  it('add user', function () {
-    users.forEach(function (user, index, array) {
-      //console.log(user);
-      user.save(function (err, u) {
-        should.not.exist(err);
-        assert.notEqual(u, undefined);
-        assert.notEqual(u, null);
+  it('add user', function (done) {
+    var user = users[0];
+    //users.forEach(function (user, index, array) {
+    //console.log(user);
+    user.save(function (err, u) {
+      //console.log(err);
+      should.not.exist(err);
+      //(err).should.be.undefined();
+      //should.not.be.undefined(u);
+      assert.notEqual(u, undefined);
+      //assert.notEqual(u, null);
+      //});
+      done();
+    });
+  });
+
+  it('update user bad email', function (done) {
+    //[1,2,3].should.containEql(4);
+    var user = users[0];
+    //users.forEach(function (user, index, array) {
+    var condition = {'_id': user._id};
+    var updates = {
+      lastLogin: Date.now(),
+      email: 'asfa@g',
+      lastName:''
+    };
+
+    models.UserModel.update(condition/*condition*/, updates/*field updates*/, {
+      //upsert: true,
+      runValidators: true
+      //context: 'query'
+    }/*etc*/, function (err, raw) {
+      /*TODO:fix this update bug with validation*/
+      should.exist(err);
+
+      assert.notEqual(raw, undefined);
+      assert.notEqual(raw, null);
+      models.UserModel.findOne({'_id': user._id}, function (err, updatedUser) {
+        updates.email.should.not.eql(updatedUser.email);
+        user.email.should.eql(updatedUser.email);
+        user.lastName.should.eql(updatedUser.lastName);
+        //console.log('existing: ', user.email);
+        //console.log('updated: ', updatedUser.email);
+        done();
       });
     });
   });
 
-  it('update user', function () {
+  it('update user GOOD', function (done) {
+    //[1,2,3].should.containEql(4);
+    var user = users[0];
+    //users.forEach(function (user, index, array) {
+    var condition = {'_id': user._id};
+    var updates = {
+      verified: true,
+      phone: c.phone(),
+      sp_api_key_id: c.hash(),
+      sp_api_key_secret: c.hash(),
+      lastLogin: Date.now(),
+      email: c.email(),
+      picture: c.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']})
+    };
 
-    users.forEach(function (user, index, array) {
-      var condition = {'_id': user._id};
-      var updates = {
-        verified: true,
-        phone: c.phone(),
-        sp_api_key_id: c.hash(),
-        sp_api_key_secret: c.hash(),
-        lastLogin: Date.now(),
-        picture: c.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']})
-      };
-      //console.log('updates: ',updates);
-      models.UserModel.update(condition/*condition*/, updates/*field updates*/, {upsert: true}/*etc*/, function (err, raw) {
-
-        should.not.exist(err);
-        assert.notEqual(raw, undefined);
-        assert.notEqual(raw, null);
-        //console.log(raw);
-        models.UserModel.findOne({'_id': user._id}, function (err, updatedUser) {
-          should.not.exist(err);
-          assert.notEqual(updatedUser, undefined);
-          assert.notEqual(updatedUser, null);
-          user.lastLogin.should.be.lessThan(updatedUser.lastLogin);
-          //console.log('existing: ', user);
-          //console.log('updated: ', updatedUser);
-        });
-      });
-      updates.phone = null;
-      models.UserModel.update(condition/*condition*/, updates/*field updates*/, {upsert: true}/*etc*/, function (err, raw) {
+    models.UserModel.update(condition/*condition*/, updates/*field updates*/, {
+      //upsert: true,
+      runValidators: true
+      //context: 'query'
+    }/*etc*/, function (err, raw) {
       /*TODO:fix this update bug with validation*/
-        //should.exist(err);
+      should.not.exist(err);
 
-        //assert.notEqual(raw, undefined);
-        //assert.notEqual(raw, null);
-        //console.log(raw);
-        models.UserModel.findOne({'_id': user._id}, function (err, updatedUser) {
-          should.not.exist(err);
-          assert.notEqual(updatedUser, undefined);
-          assert.notEqual(updatedUser, null);
-          user.lastLogin.should.be.lessThan(updatedUser.lastLogin);
-          //console.log('existing: ', user);
-          //console.log('updated: ', updatedUser);
-        });
+      assert.notEqual(raw, undefined);
+      assert.notEqual(raw, null);
+      models.UserModel.findOne({'_id': user._id}, function (err, updatedUser) {
+        should.not.exist(err);
+        assert.notEqual(updatedUser, undefined);
+        assert.notEqual(updatedUser, null);
+        //user.lastLogin.should.be.lessThan(updatedUser.lastLogin);
+        updates.email.should.eql(updatedUser.email);
+        //console.log('existing: ', user.email);
+        //console.log('updated: ', updatedUser.email);
+        done();
       });
     });
   });
 });
 
-
 var locs = helper.getRandomLocations(count);
 
 describe('Mongoose.IncidentLocation', function () {
   "use strict";
-  it('Add new incidentLocation', function () {
-    locs.forEach(function (loc, index, array) {
+  locs.forEach(function (loc, index, array) {
+    it('Add new incidentLocation', function () {
       loc.save(function (err, location) {
         should.not.exist(err);
         assert.notEqual(location, undefined);
@@ -90,38 +116,38 @@ describe('Mongoose.IncidentLocation', function () {
     });
   });
 });
-
-var incidents = helper.getRandomIncidents(count);
-describe('Mongoose.Incident', function () {
-  "use strict";
-  it('Add new incident', function () {
-
-    incidents.forEach(function (incident, index, array) {
-      //console.log(incident);
-      incident.save(function (err, i) {
-        should.not.exist(err);
-        assert.notEqual(i, undefined);
-        assert.notEqual(i, null);
-      });
-    });
-  });
-});
-
-var mediaBundles = helper.getRandonMediaBundles(incidents);
-describe('Mongoose.MediaBundle', function () {
-  "use strict";
-  it('Add new mediaBundle', function () {
-
-    mediaBundles.forEach(function (mb, index, array) {
-      //console.log(incident);
-      mb.save(function (err, _mb) {
-        should.not.exist(err);
-        assert.notEqual(_mb, undefined);
-        assert.notEqual(_mb, null);
-      });
-    });
-  });
-});
+//
+//var incidents = helper.getRandomIncidents(count);
+//describe('Mongoose.Incident', function () {
+//  "use strict";
+//  it('Add new incident', function () {
+//
+//    incidents.forEach(function (incident, index, array) {
+//      //console.log(incident);
+//      incident.save(function (err, i) {
+//        should.not.exist(err);
+//        assert.notEqual(i, undefined);
+//        assert.notEqual(i, null);
+//      });
+//    });
+//  });
+//});
+//
+//var mediaBundles = helper.getRandonMediaBundles(incidents);
+//describe('Mongoose.MediaBundle', function () {
+//  "use strict";
+//  it('Add new mediaBundle', function () {
+//
+//    mediaBundles.forEach(function (mb, index, array) {
+//      //console.log(incident);
+//      mb.save(function (err, _mb) {
+//        should.not.exist(err);
+//        assert.notEqual(_mb, undefined);
+//        assert.notEqual(_mb, null);
+//      });
+//    });
+//  });
+//});
 //
 //var crypto = require('crypto'),
 //    fs = require('fs'),

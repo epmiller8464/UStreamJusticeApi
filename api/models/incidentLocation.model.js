@@ -1,4 +1,3 @@
-
 /**
  * Created by ghostmac on 11/14/15.
  */
@@ -12,7 +11,8 @@ module.exports = function (mongoose) {
       type: {type: String, required: true, enum: ['Point', 'LineString', 'Polygon'], default: 'Point'},
       coordinates: [Number]
     },
-    incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident'}
+    incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident'},
+    datetime: {type: Number, required: true, default: Date.now()}
   }, {collection: 'incidentLocation'});
   incidentLocationSchema.index({loc: '2dsphere'});
   incidentLocationSchema.index({incidentId: 1});

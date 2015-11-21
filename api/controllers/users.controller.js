@@ -160,7 +160,10 @@ UsersController.prototype.put = function (req, res, next) {
   delete _user._id;
   var updates = _user;
   //console.log('updates: ',updates);
-  _UserModel.update(condition/*condition*/, updates/*field updates*/, {upsert: true}/*etc*/, function (err, raw) {
+  _UserModel.update(condition/*condition*/, updates/*field updates*/, {
+    //upsert: true,
+    runValidators: true
+  }/*etc*/, function (err, raw) {
 
     if (err) {
       errStr = err.message;
