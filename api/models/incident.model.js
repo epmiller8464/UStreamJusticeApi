@@ -3,6 +3,7 @@ var u = require('util');
 var enums = require('./enums.model');
 module.exports = function (mongoose) {
   'use strict';
+  var IncidentSnapshotModel = require('./incidentSnapshot.model')(mongoose);
   var Model;
   /*
    *@TODO: add validation pre save
@@ -69,7 +70,7 @@ module.exports = function (mongoose) {
 
   incidentSchema.methods.toDiffSnapshot = function (snapshot) {
     var self = this.toSnapshot();
-    var diffs = [];
+    var diffs = {};
 
     for (var field in self) {
       var curr = self[field],
@@ -91,10 +92,23 @@ module.exports = function (mongoose) {
 
   incidentSchema.post('save', function (doc) {
     console.log('post save');
-    console.log('post save');
+    var snapshot = new IncidentSnapshotModel(doc.toSnapshot());
+    snapshot.save(function (err, saved) {
+      console.log('incident snapshot capture %s',err ? 'FAILED':'SUCCEEDED');
+      //console.log(saved);
+
+    });
   });
-  incidentSchema.post('update', function (doc) {
-    console.log('post update');
+  incidentSchema.pre('update', function (next) {
+    console.log('pre update');
+    //console.log(args);
+    //var snapshot = new IncidentSnapshotModel(doc.toSnapshot());
+    //snapshot.save(function (err, saved) {
+    //  console.log('incident snapshot capture %s',err ? 'FAILED':'SUCCEEDED');
+    //  console.log(saved);
+    //});
+    console.log(this._update.$set);
+    next();
   });
 
 //TODO: add validate methods

@@ -127,89 +127,57 @@ IncidentController.prototype.put = function (req, res, next) {
   delete _updates._id;
   //var updates = _updates;
   //console.log('updates: ',updates);
-  _IncidentModel.update(condition/*condition*/, _updates/*field updates*/, {
-    runValidators: true
-  }/*etc*/, function (err, raw) {
+  //_IncidentModel.update(condition/*condition*/, _updates/*field updates*/, {
+  //  runValidators: true
+  //}/*etc*/, function (err, raw) {
+  //var m = _IncidentModel.hydrate({_id: _id});
+  _IncidentModel.findOne(condition, function (err, model) {
 
     if (err) {
       errStr = err.message;
       statusCode = 409;
       jsonResult = {message: "error", error: errStr};
+      res.send(statusCode, jsonResult);
+      return next();
+
     } else {
+      var snapShot = model.toSnapshot();
+      var diff = model.toDiffSnapshot(_updates);
       //_logger.debug("Successfully added User object for " + user.email);
       //statusCode = 200;
-      jsonResult = raw;
+      //jsonResult = update;
+      _IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
+
+        if (err) {
+          errStr = err.message;
+          statusCode = 409;
+          jsonResult = {message: "error", error: errStr};
+        } else {
+          //_logger.debug("Successfully added User object for " + user.email);
+          //statusCode = 200;
+          jsonResult = rawUpdate;
+        }
+        res.send(statusCode, jsonResult);
+
+        return next();
+      });
     }
-    res.send(statusCode, jsonResult);
-
-    return next();
-
   });
-
-  //var errStr = null;
-  //var statusCode = 200;
-  //var jsonResult = null;
-  //var _incident = req.body;
-  //var _id = _incident._id;
-  //console.log(util.inspect(_Incident));
-  //var newIncident = new _IncidentModel(Incident);
-
-  //_IncidentModel.findOne({'_id': _id}, function (err, incident) {
+  //_IncidentModel.findByIdAndUpdate(_id, _updates, {runValidators: true}, function (err, update) {
+  //
   //  if (err) {
   //    errStr = err.message;
-  //    //res.status(400);
-  //    statusCode = 400;
+  //    statusCode = 409;
   //    jsonResult = {message: "error", error: errStr};
-  //    res.send(statusCode, jsonResult);
-  //    return next();
-  //
-  //  } else if (typeof incident === 'undefined' || incident === null) {
-  //
-  //    errStr = util.format('Incident with id:%s could not be found.', _id);
-  //    //res.status(400);
-  //    statusCode = 400;
-  //
-  //    jsonResult = {message: "error", error: errStr};
-  //    res.send(statusCode, jsonResult);
-  //
-  //    return next();
-  //
   //  } else {
-  //    //res.status(200);
-  //    statusCode = 200;
-  //    //jsonResult = Incident;
-  //    //res.send(Incident);
-  //    incident.save(function (err, incident) {
-  //      if (err) {
-  //        errStr = err.message;
-  //        //res.status(400);
-  //        statusCode = 400;
-  //        jsonResult = {message: "error", error: errStr};
-  //      } else {
-  //        //_logger.debug("Successfully added incident object for " + incident._id);
-  //        statusCode = 200;
-  //        //res.json(Incident);
-  //        //
-  //        jsonResult = incident;
-  //      }
-  //      res.send(statusCode, jsonResult);
-  //
-  //      return next();
-  //    });
+  //    //_logger.debug("Successfully added User object for " + user.email);
+  //    //statusCode = 200;
+  //    jsonResult = update;
   //  }
-  //});
-
-
-  //var newIncident = new _IncidentModel({
-  //  active: incident.active,
-  //  _id: incident._id,
-  //  firstName: incident.firstName,
-  //  lastName: incident.lastName,
-  //  sp_api_key_id: incident.sp_api_key_id,
-  //  sp_api_key_secret: incident.sp_api_key_secret,
-  //  created: incident.created,
-  //  lastLogin: incident.lastLogin,
-  //  picture: incident.picture
+  //  res.send(statusCode, jsonResult);
+  //
+  //  return next();
+  //
   //});
 
 };
