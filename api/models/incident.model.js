@@ -91,6 +91,7 @@ module.exports = function (mongoose) {
 
   incidentSchema.post('save', function (doc) {
     console.log('post save');
+    console.log('post save');
   });
   incidentSchema.post('update', function (doc) {
     console.log('post update');
