@@ -30,11 +30,11 @@ var setupTasksArray = [
     });
   },
   function dropIncidentSnapshotCollection(callback) {
-    console.log("dropIncidentCollection");
+    console.log("dropIncidentSnapshotCollection");
     var model = _db.collection('incidentSnapshot');
     if (undefined !== model) {
       model.drop(function (err, reply) {
-        console.log('incident collection dropped');
+        console.log('incidentSnapshot collection dropped');
         callback(0);
       });
     } else {

@@ -1,17 +1,5 @@
 var assert = require('assert');
 var u = require('util');
-//  var IncidentStates = {
-//    NEW: 'NEW',
-//    LIVE: 'LIVE',
-//    COMPLETE: 'COMPLETE',
-//    CLOSED: 'CLOSED',
-//    CANCELLED: 'CANCELLED'
-//  };
-//  var SourceTypes = {
-//    VICTIM: 'VICTIM', WITNESS: 'WITNESS'
-//  };
-//module.exports = IncidentStates;
-//module.exports = SourceTypes;
 var enums = require('./enums.model');
 module.exports = function (mongoose) {
   'use strict';
@@ -84,13 +72,12 @@ module.exports = function (mongoose) {
     var diffs = [];
 
     for (var field in self) {
-      var curr = self[field],// ? self[field].toString() : '',
-          snField = snapshot[field];// ? snapshot[field].toString() : '';
-      //if ((curr && snField) && curr.toString() !== snField.toString()) {
+      var curr = self[field],
+          snField = snapshot[field];
 
       if ((curr && snField) && curr.toString() !== snField.toString()) {
         diffs[field] = curr;
-      } else if ((!snField && curr)|| (snField && !curr)) {
+      } else if ((!snField && curr) || (snField && !curr)) {
         diffs[field] = curr;
       }
       var pt = incidentSchema.pathType(field);
@@ -98,11 +85,16 @@ module.exports = function (mongoose) {
         diffs[field] = this[field];
       }
     }
-    //console.log(snapshot._id);
     //console.log(diffs.length);
-    //console.log(this.inspect());
     return diffs;
   };
+
+  incidentSchema.post('save', function (doc) {
+    console.log('post save');
+  });
+  incidentSchema.post('update', function (doc) {
+    console.log('post update');
+  });
 
 //TODO: add validate methods
   try {
