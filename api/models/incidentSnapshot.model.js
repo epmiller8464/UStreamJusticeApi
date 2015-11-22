@@ -8,7 +8,7 @@ module.exports = function (mongoose) {
 
   var incidentSnapshotSchema = new mongoose.Schema({
         state: {type: String},
-        location: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
+        loc: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
         categoryType: {type: String, trim: true, uppercase: true},
         incidentDate: {type: Date},
         hammertime: {type: Number},

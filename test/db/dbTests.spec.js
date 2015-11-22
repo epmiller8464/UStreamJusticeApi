@@ -143,9 +143,6 @@ describe('Mongoose.Incident', function () {
     it('update an existing incident', function (done) {
       //incident.incidentTarget = undefined;
       var condition = {'_id': incident._id};
-
-      //console.log(sn);
-      //sn.should.have.property('incidentId');
       var sn = incident.toSnapshot(null);
       sn = incident.toSnapshot(undefined);
       sn = incident.toSnapshot();
@@ -153,15 +150,15 @@ describe('Mongoose.Incident', function () {
         description: 'test update',
         state: models.IncidentStates.LIVE,
         tags: incident.tags.concat('911'),
-        incidentTarget: undefined
+        incidentTarget: undefined,
+        //make sure no change fields arent sent
+        sourceType: incident.sourceType,
+        loc: helper.getRandomLocations(1)[0]
       };
-      //console.log(incident.tags);
-      //console.log(incident.tags);
-
       /* state: {
        type: String, required: true
        },
-       location: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
+       loc: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
        categoryType: {type: String, trim: true, uppercase: true},
        incidentDate: {type: Date, default: Date.now},
        hammertime: {type: Number, required: true, default: Date.now()},
@@ -178,15 +175,11 @@ describe('Mongoose.Incident', function () {
        mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
        snapshotTime: {type: Number, required: true, default: Date.now()},
        incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', require: true},*/
-      //var updates = {
-      //  description: c.paragraph()
-      //};
-      //models.IncidentModel.update(condition/*condition*/, updates/*field updates*/, {
       models.IncidentModel.update(condition, updates, {runValidators: true}/*etc*/, function (err, raw) {
         should.not.exist(err);
         assert.notEqual(raw, undefined);
         assert.notEqual(raw, null);
-
+        console.log(raw);
         models.IncidentModel.findOne({'_id': incident._id}, function (err, update) {
           should.not.exist(err);
           assert.notEqual(update, undefined);
@@ -197,9 +190,11 @@ describe('Mongoose.Incident', function () {
           update.tags.forEach(function (tag, i, arr) {
             updates.tags.should.containEql(tag);
           });
-          should.equal(update.incidentTarget,null);
+          should.equal(update.incidentTarget, null);
+          should.equal(update.loc.toString(), updates.loc.id);
+          //console.log(update.loc);
           var diff = update.toDiffSnapshot(sn);
-          //console.log(diff);
+          console.log(diff);
 
           var snapshot = models.IncidentSnapshotModel(diff);
           snapshot.save(function (err, saved) {

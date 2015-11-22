@@ -10,7 +10,7 @@ var controllerName = "incidents";
 var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version, controllerName);
 console.log(PATH);
 
-var count = 1;
+var count = 2;
 var data = helper.getRandomIncidents(count);
 count.should.eql(data.length);
 
@@ -19,7 +19,7 @@ var testDescription = util.format('POST/%s', controllerName);
 describe(testDescription, function () {
   data.forEach(function (incident, index, array) {
     it('should add a new incident', function (done) {
-
+      //console.log(incident);
       request(server)
           .post(PATH)
           .type('application/json')
@@ -35,6 +35,7 @@ describe(testDescription, function () {
     });
 
     it('should return statusCode === 400; an error inserting duplicate incidents', function (done) {
+      //console.log(incident);
 
       request(server)
           .post(PATH)
@@ -113,7 +114,6 @@ describe(testDescription, function () {
   });
 
 });
-
 
 
 testDescription = util.format('PUT/%s', controllerName);

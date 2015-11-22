@@ -58,10 +58,10 @@ var TestDataHelper = {
     for (var i = 0; i < count; i++) {
       var t = targets[i];
       var l = locations[i];
-      //console.log('location: %s', l);
+      //console.log('loc: %s', l);
       //console.log('user: %s', t);
       incidents.push(new Incident({
-        location: l._id,
+        loc: l._id,
         sourceIdentity: t._id,
         incidentTarget: t._id,
         categoryType: "Traffic Stop",

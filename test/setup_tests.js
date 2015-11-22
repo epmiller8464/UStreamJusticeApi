@@ -29,6 +29,18 @@ var setupTasksArray = [
       callback(0);
     });
   },
+  function dropIncidentSnapshotCollection(callback) {
+    console.log("dropIncidentCollection");
+    var model = _db.collection('incidentSnapshot');
+    if (undefined !== model) {
+      model.drop(function (err, reply) {
+        console.log('incident collection dropped');
+        callback(0);
+      });
+    } else {
+      callback(0);
+    }
+  },
   function dropIncidentCollection(callback) {
     console.log("dropIncidentCollection");
     var user = _db.collection('incident');

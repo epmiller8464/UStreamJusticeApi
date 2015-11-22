@@ -27,7 +27,7 @@ module.exports = function (mongoose) {
           enum: Object.keys(enums.IncidentStates),
           default: enums.IncidentStates.NEW
         },
-        location: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
+        loc: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
         //locations: {type: [{lat: Number, long: Number}]},
         categoryType: {type: String, trim: true, uppercase: true},
         incidentDate: {type: Date, default: Date.now},

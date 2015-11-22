@@ -521,7 +521,7 @@ jQuery.cookie = function(name, value, options) {
 				};
 				deserialize();
 				break;
-			case "location":
+			case "loc":
 				var current = this.find("a").filter(function() { return this.href.toLowerCase() == location.href.toLowerCase(); });
 				if ( current.length ) {
 					current.addClass("selected").parents("ul, li").add( current.next() ).show();

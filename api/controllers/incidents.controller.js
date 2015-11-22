@@ -84,10 +84,7 @@ IncidentController.prototype.post = function (req, res, next) {
 ///TODO: validate incoming object meets min requirements.
   newIncident.save(function (err, incident) {
     if (err) {
-      //_logger.error("Mongoose error creating new account for " + Incident._id);
-      //_logger.error(err);
       res.status(400);
-      //res.json({message: "error", error: err.message});
       res.send({message: "error", error: err.message});
 
     } else {
@@ -172,55 +169,83 @@ IncidentController.prototype.put = function (req, res, next) {
   var errStr = null;
   var statusCode = 200;
   var jsonResult = null;
-  var _incident = req.body;
-  var _id = _incident._id;
+  var _updates = req.body;
+  var _id = _updates._id;
+  var condition = {'_id': _id};
+  delete _updates._id;
+  //var updates = _updates;
+  //console.log('updates: ',updates);
+  _IncidentModel.update(condition/*condition*/, _updates/*field updates*/, {
+    runValidators: true
+  }/*etc*/, function (err, raw) {
+
+    if (err) {
+      errStr = err.message;
+      statusCode = 400;
+      jsonResult = {message: "error", error: errStr};
+    } else {
+      //_logger.debug("Successfully added User object for " + user.email);
+      statusCode = 200;
+      jsonResult = raw;
+    }
+    res.send(statusCode, jsonResult);
+
+    return next();
+
+  });
+
+  //var errStr = null;
+  //var statusCode = 200;
+  //var jsonResult = null;
+  //var _incident = req.body;
+  //var _id = _incident._id;
   //console.log(util.inspect(_Incident));
   //var newIncident = new _IncidentModel(Incident);
 
-  _IncidentModel.findOne({'_id': _id}, function (err, incident) {
-    if (err) {
-      errStr = err.message;
-      //res.status(400);
-      statusCode = 400;
-      jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-      return next();
-
-    } else if (typeof incident === 'undefined' || incident === null) {
-
-      errStr = util.format('Incident with id:%s could not be found.', _id);
-      //res.status(400);
-      statusCode = 400;
-
-      jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-
-      return next();
-
-    } else {
-      //res.status(200);
-      statusCode = 200;
-      //jsonResult = Incident;
-      //res.send(Incident);
-      incident.save(function (err, incident) {
-        if (err) {
-          errStr = err.message;
-          //res.status(400);
-          statusCode = 400;
-          jsonResult = {message: "error", error: errStr};
-        } else {
-          //_logger.debug("Successfully added incident object for " + incident._id);
-          statusCode = 200;
-          //res.json(Incident);
-          //
-          jsonResult = Incident;
-        }
-        res.send(statusCode, jsonResult);
-
-        return next();
-      });
-    }
-  });
+  //_IncidentModel.findOne({'_id': _id}, function (err, incident) {
+  //  if (err) {
+  //    errStr = err.message;
+  //    //res.status(400);
+  //    statusCode = 400;
+  //    jsonResult = {message: "error", error: errStr};
+  //    res.send(statusCode, jsonResult);
+  //    return next();
+  //
+  //  } else if (typeof incident === 'undefined' || incident === null) {
+  //
+  //    errStr = util.format('Incident with id:%s could not be found.', _id);
+  //    //res.status(400);
+  //    statusCode = 400;
+  //
+  //    jsonResult = {message: "error", error: errStr};
+  //    res.send(statusCode, jsonResult);
+  //
+  //    return next();
+  //
+  //  } else {
+  //    //res.status(200);
+  //    statusCode = 200;
+  //    //jsonResult = Incident;
+  //    //res.send(Incident);
+  //    incident.save(function (err, incident) {
+  //      if (err) {
+  //        errStr = err.message;
+  //        //res.status(400);
+  //        statusCode = 400;
+  //        jsonResult = {message: "error", error: errStr};
+  //      } else {
+  //        //_logger.debug("Successfully added incident object for " + incident._id);
+  //        statusCode = 200;
+  //        //res.json(Incident);
+  //        //
+  //        jsonResult = incident;
+  //      }
+  //      res.send(statusCode, jsonResult);
+  //
+  //      return next();
+  //    });
+  //  }
+  //});
 
 
   //var newIncident = new _IncidentModel({
