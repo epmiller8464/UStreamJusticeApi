@@ -56,8 +56,6 @@ describe('Mongoose.User', function () {
         updates.email.should.not.eql(updatedUser.email);
         user.email.should.eql(updatedUser.email);
         user.lastName.should.eql(updatedUser.lastName);
-        //console.log('existing: ', user.email);
-        //console.log('updated: ', updatedUser.email);
         done();
       });
     });
@@ -194,7 +192,7 @@ describe('Mongoose.Incident', function () {
           should.equal(update.loc.toString(), updates.loc.id);
           //console.log(update.loc);
           var diff = update.toDiffSnapshot(sn);
-          console.log(diff);
+          //console.log(diff);
 
           var snapshot = models.IncidentSnapshotModel(diff);
           snapshot.save(function (err, saved) {
@@ -204,6 +202,17 @@ describe('Mongoose.Incident', function () {
             done();
           });
         });
+      });
+    });
+
+    it('delete an existing incident', function (done) {
+
+      models.IncidentModel.findByIdAndRemove(incident._id,function(err,doc){
+        should.not.exist(err);
+        assert.notEqual(doc, undefined);
+        assert.notEqual(doc, null);
+        //console.log(err,doc);
+        done();
       });
     });
   });

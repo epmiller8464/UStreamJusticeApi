@@ -3,14 +3,15 @@ var request = require('supertest');
 var assert = require('assert');
 var util = require('util');
 var server = require('../../../app');
+var models = server.models;
 var chance = require('chance')();
 var helper = require('../../helpers/TestHelper');
 var config = require('../../../config/environment');
 var controllerName = "incidents";
 var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version, controllerName);
-console.log(PATH);
+//console.log(PATH);
 
-var count = 2;
+var count = 1;
 var data = helper.getRandomIncidents(count);
 count.should.eql(data.length);
 
@@ -43,6 +44,7 @@ describe(testDescription, function () {
           .send(incident)
           .end(function (err, res) {
             assert.equal(res.statusCode, 400);
+            //console.log(err);
             var result = res.body;
             should.notEqual(result, undefined);
             result.should.have.property('error');
@@ -117,47 +119,60 @@ describe(testDescription, function () {
 
 
 testDescription = util.format('PUT/%s', controllerName);
-//
-//describe(testDescription, function () {
-//  //console.log(array[index]);
-//  data.forEach(function(incident, index, array) {
-//
-//    it('should update an existing incident', function (done) {
-//      var newImgUrl = incident.picture = chance.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']});
-//
-//      request(server)
-//          .put(PATH)
-//          .type('application/json')
-//          .send(incident)
-//          .end(function (err, res) {
-//            assert.equal(res.statusCode, 200);
-//            var result = res.body;
-//            //console.log(res.statusCode);
-//            //console.log(result);
-//            should.notEqual(result, undefined);
-//            result.should.have.property('_id');
-//            //result._id.toString().should.eql(incident._id.toString());
-//            result.picture.should.eql(newImgUrl);
-//            done();
-//          });
-//    });
-//  });
-//});
-//
-//describe('DELETE /incidents', function () {
-//  //console.log(array[index]);
-//  incidents.forEach(function createUser(incident, index, array) {
-//
-//    it('should update an existing incident', function (done) {
-//      request(server)
-//          .delete(PATH + '/' + incident.email)
-//          .end(function (err, res) {
-//            assert.equal(res.statusCode, 200);
-//            var result = res.body;
-//            should.notEqual(result, undefined);
-//
-//            done();
-//          });
-//    });
-//  });
-//});
+
+describe(testDescription, function () {
+  data.forEach(function (incident, index, array) {
+    //var updates = {
+    incident.description = 'test update';
+    incident.state = models.IncidentStates.LIVE;
+    incident.tags = incident.tags.concat('911');
+    incident.incidentTarget = undefined;
+    //make sure no change fields arent sent
+    incident.sourceType = incident.sourceType;
+    incident.loc = helper.getRandomLocations(1)[0];
+    //};
+    it('should update an existing incident', function (done) {
+      request(server)
+          .put(PATH)
+          .type('application/json')
+          .send(incident)
+          .end(function (err, res) {
+            assert.equal(res.statusCode, 200);
+            var result = res.body;
+            //console.log(res.statusCode);
+            //console.log(result);
+            should.notEqual(result, undefined);
+            result.should.have.property('ok');
+            done();
+          });
+    });
+  });
+});
+testDescription = util.format('DELETE/%s', controllerName);
+
+describe(testDescription, function () {
+  //console.log(array[index]);
+  data.forEach(function (incident, index, array) {
+
+    it('should delete an existing incident', function (done) {
+      request(server)
+          .delete(PATH + '/' + incident._id)
+          .end(function (err, res) {
+            assert.equal(res.statusCode, 204);
+            var result = res.body;
+            should.notEqual(result, undefined);
+            done();
+          });
+    });
+    it('should fail deleting a fake incident', function (done) {
+      request(server)
+          .delete(PATH + '/fake')
+          .end(function (err, res) {
+            assert.equal(res.statusCode, 404);
+            var result = res.body;
+            should.notEqual(result, undefined);
+            done();
+          });
+    });
+  });
+});

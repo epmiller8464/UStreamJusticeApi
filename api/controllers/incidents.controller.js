@@ -90,8 +90,6 @@ IncidentController.prototype.post = function (req, res, next) {
     } else {
       //_logger.debug("Successfully added incident object for " + Incident._id);
       res.status(201);
-      //res.json(Incident);
-      //
       res.send(incident);
     }
     return next();
@@ -101,67 +99,21 @@ IncidentController.prototype.post = function (req, res, next) {
 IncidentController.prototype.delete = function (req, res, next) {
 
   var errStr = null;
-  var statusCode = 200;
+  var statusCode = 204;
   var jsonResult = null;
   var _id = req.params['id'];
 
-  _IncidentModel.findOne({'_id': _id}, function (err, incident) {
+  _IncidentModel.findByIdAndRemove(_id, function (err, doc) {
     if (err) {
       errStr = err.message;
-      //res.status(400);
-      statusCode = 400;
+      statusCode = 404;
       jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-      return next();
-
-    } else if (typeof incident === 'undefined' || incident === null) {
-
-      errStr = util.format('Incident with _id:%s could not be found.', _id);
-      //res.status(400);
-      statusCode = 400;
-
-      jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-
-      return next();
-
     } else {
-      //res.status(200);
-      statusCode = 200;
-      //jsonResult = Incident;
-      //res.send(Incident);
-      //var newIncident = new _IncidentModel({
-      incident.remove(function (err, delIncident) {
-        if (err) {
-          errStr = err.message;
-          //res.status(400);
-          statusCode = 400;
-          jsonResult = {message: "error", error: errStr};
-        } else {
-          //_logger.debug("Successfully added incident object for " + Incident._id);
-          statusCode = 200;
-          jsonResult = delIncident;
-        }
-        res.send(statusCode, jsonResult);
-
-        return next();
-      });
+      jsonResult = doc;
     }
+    res.send(statusCode, jsonResult);
+    next();
   });
-
-
-  //var newIncident = new _IncidentModel({
-  //  active: Incident.active,
-  //  _id: Incident._id,
-  //  firstName: Incident.firstName,
-  //  lastName: Incident.lastName,
-  //  sp_api_key_id: Incident.sp_api_key_id,
-  //  sp_api_key_secret: Incident.sp_api_key_secret,
-  //  created: Incident.created,
-  //  lastLogin: Incident.lastLogin,
-  //  picture: Incident.picture
-  //});
-
 };
 
 IncidentController.prototype.put = function (req, res, next) {
@@ -181,11 +133,11 @@ IncidentController.prototype.put = function (req, res, next) {
 
     if (err) {
       errStr = err.message;
-      statusCode = 400;
+      statusCode = 409;
       jsonResult = {message: "error", error: errStr};
     } else {
       //_logger.debug("Successfully added User object for " + user.email);
-      statusCode = 200;
+      //statusCode = 200;
       jsonResult = raw;
     }
     res.send(statusCode, jsonResult);
