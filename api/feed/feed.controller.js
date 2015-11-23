@@ -179,7 +179,7 @@ FeedController.prototype.getFeeds = function(req, res) {
                 }
             });
         }
-    ]
+    ];
 
     async.series(getUserFeedsTasks, function finalizer(err, results) {
         if (null == resultStatus) {
@@ -268,7 +268,7 @@ FeedController.prototype.subscribe = function(req, res) {
                         resultJSON = { error : errStr };
                         _logger.debug(errStr);
                         cb(new Error(errStr));
-                        return;
+
                     } else {
                         feed = newFeed[0];
                         _logger.debug("Successfully added feed " + feedURL +
@@ -288,7 +288,7 @@ FeedController.prototype.subscribe = function(req, res) {
                     resultJSON = { error : errStr };
                     _logger.debug(errStr);
                     cb(new Error(errStr));
-                    return;
+
                 } else {
                     _logger.debug("Successfully subscribed user " + user.email +
                                  " to feed " + feed.feedURL);
@@ -297,7 +297,7 @@ FeedController.prototype.subscribe = function(req, res) {
                 }
             });
         }
-    ]
+    ];
 
     async.series(subFeedTasks, function finalizer(err, results) {
         if (null == resultStatus) {
@@ -364,7 +364,7 @@ FeedController.prototype.unsubscribe = function(req, res) {
                     resultJSON = { error : errStr };
                     _logger.debug(errStr);
                     cb(new Error(errStr));
-                    return;
+
                 } else {
                     _logger.debug("Successfully unsubscribed user " + user.email +
                                  " from feed " + feedID);
@@ -373,7 +373,7 @@ FeedController.prototype.unsubscribe = function(req, res) {
                 }
             });
         }
-    ]
+    ];
 
     async.series(unsubFeedTasks, function finalizer(err, results) {
         if (null == resultStatus) {
@@ -581,7 +581,7 @@ FeedController.prototype.getFeedEntries = function(req, res) {
                                    description : state.feed.description,
                                    unreadEntries : state.feed.unreadEntries,
                                    readEntries : state.feed.readEntries,
-                                   unreadCount : state.feed.unreadEntries.length } }
+                                   unreadCount : state.feed.unreadEntries.length } };
             resultJSON.feed.unreadEntries.forEach(function processEntry(entry, index, array) {
                 entry.read = false;
             });
@@ -590,7 +590,7 @@ FeedController.prototype.getFeedEntries = function(req, res) {
             });
             cb(null);
         }
-    ]
+    ];
 
     async.series(getUserFeedEntryTasks, function finalizer(err, results) {
         if (null == resultStatus) {
@@ -756,7 +756,7 @@ FeedController.prototype.updateFeedReadStatus = function(req, res) {
                                    'unreadCount' : 0 }};
             cb(null);
         }
-    ]
+    ];
 
     async.series(markUserFeedReadTasks, function finalizer(err, results) {
         if (null == resultStatus) {
@@ -940,7 +940,7 @@ FeedController.prototype.updateFeedEntryReadStatus = function(req, res) {
                                    'unreadCount' : unreadCount }};
             cb(null);
         }
-    ]
+    ];
 
     async.series(markUserFeedEntryReadTasks, function finalizer(err, results) {
         if (null == resultStatus) {
