@@ -137,7 +137,21 @@ IncidentController.prototype.put = function (req, res, next) {
       //var diff = _IncidentModel.getDiff(model, _updates);
       //console.log(diff);
       //var diff = model.toDiffSnapshot(_updates);
-      _IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
+      //_IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
+      //
+      //  if (err) {
+      //    errStr = err.message;
+      //    statusCode = 409;
+      //    jsonResult = {message: "error", error: errStr};
+      //  } else {
+      //    jsonResult = rawUpdate;
+      //  }
+      //  res.send(statusCode, jsonResult);
+      //
+      //  return next();
+      //}).then(function(){
+      //_IncidentModel.findOneAndUpdate(condition,  {runValidators: true}, function (err, rawUpdate) {
+      _IncidentModel.findOneAndUpdate(condition, {$set: _updates}, {runValidators: true}, function (err, rawUpdate) {
 
         if (err) {
           errStr = err.message;

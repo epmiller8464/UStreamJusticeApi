@@ -52,13 +52,17 @@ module.exports = function (mongoose) {
 
 
   incidentSchema.static('getDiff', function (original, modified) {
+    var _ogRaw = original instanceof mongoose.Model ?
+        original.toObject() :
+        original instanceof Object ? original : undefined;
 
+    var _modRaw = modified instanceof Object ? modified : undefined;
     var diffs = {};
-    if (original instanceof mongoose.Model && modified instanceof Object) {
+    if (_ogRaw && _modRaw) {
       var options = {minimize: false};
       Object.defineProperty(diffs, 'incidentId', {value: original._id.toString(), enumerable: true});
-      var l = original.toObject(options),
-          r = modified;
+      var l = _ogRaw,//original.toObject(options),
+          r = _modRaw;
       //lKeys = Object.keys(l),
       //var rKeys = Object.keys(modified);
       delete l._id;
@@ -84,6 +88,34 @@ module.exports = function (mongoose) {
     return diffs;
   });
 
+
+  incidentSchema.pre('findOneAndUpdate', function (next) {
+
+    var raw = this._update.$set;
+    //var _doc = this._doc.toObject();
+    Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
+    var snapshot = new IncidentSnapshotModel(raw);
+    snapshot.save(function (err, saved) {
+      console.log('pre -> findOneAndUpdate: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+      //console.log(saved);
+    });
+    //console.log(this._update.$set);
+    next();
+  });
+
+  incidentSchema.pre('update', function (next) {
+    var raw = this._update.$set;
+
+    Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
+    var snapshot = new IncidentSnapshotModel(raw);
+    snapshot.save(function (err, saved) {
+      console.log('pre -> update: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+      //console.log(saved);
+    });
+    //console.log(this._update.$set);
+    next();
+  });
+
   incidentSchema.post('save', function (doc) {
     var raw = doc.toObject();
     Object.defineProperty(raw, 'incidentId', {value: raw._id.toString(), enumerable: true});
@@ -91,21 +123,25 @@ module.exports = function (mongoose) {
 
     //var s = snapshot.save();
     var s = snapshot.save(function (err, saved) {
-      console.log('incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+      console.log('post -> post: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
       //console.log(saved);
     });
   });
 
-  incidentSchema.pre('update', function (next) {
+  incidentSchema.post('findOneAndUpdate', function (doc) {
     var raw = this._update.$set;
-    Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
+    var _doc = doc.toObject();
+    var diffs = Model.getDiff(_doc, raw);
+    console.log(diffs);
+    Object.defineProperty(raw, 'incidentId', {value: doc._id.toString(), enumerable: true});
+
     var snapshot = new IncidentSnapshotModel(raw);
-    snapshot.save(function (err, saved) {
-      console.log('update incident snapshot capture %s\n',err ? 'FAILED':'SUCCEEDED');
-      //console.log(saved);
+
+    //var s = snapshot.save();
+    var s = snapshot.save(function (err, saved) {
+      console.log('post -> findOneAndUpdate: snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+      console.log(saved);
     });
-    //console.log(this._update.$set);
-    next();
   });
 
 //TODO: add validate methods

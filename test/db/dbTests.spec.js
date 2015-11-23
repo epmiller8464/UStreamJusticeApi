@@ -174,38 +174,59 @@ describe('Mongoose.Incident', function () {
        mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
        snapshotTime: {type: Number, required: true, default: Date.now()},
        incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', require: true},*/
-      models.IncidentModel.update(condition, updates, {runValidators: true}/*etc*/, function (err, raw) {
+      //models.IncidentModel.findOneAndUpdate(condition, {$set: _updates}, function (err, rawUpdate) {
+      //
+      //  if (err) {
+      //    errStr = err.message;
+      //    statusCode = 409;
+      //    jsonResult = {message: "error", error: errStr};
+      //  } else {
+      //    jsonResult = rawUpdate;
+      //  }
+      //  res.send(statusCode, jsonResult);
+      //
+      //  return next();
+      //}).then(function () {};
+      models.IncidentModel.findOneAndUpdate(condition, {$set: updates}, {runValidators: true}, function (err, rawUpdate) {
         should.not.exist(err);
-        assert.notEqual(raw, undefined);
-        assert.notEqual(raw, null);
-        console.log(raw);
-        models.IncidentModel.findOne({'_id': incident._id}, function (err, update) {
-          should.not.exist(err);
-          assert.notEqual(update, undefined);
-          assert.notEqual(update, null);
-          update.description.should.be.eql(updates.description);
-          update.description.should.be.not.eql(incident.description);
-          update.state.should.be.eql(updates.state);
-          update.tags.forEach(function (tag, i, arr) {
-            updates.tags.should.containEql(tag);
-          });
-          should.equal(update.incidentTarget, null);
-          should.equal(update.loc.toString(), updates.loc.id);
-          //console.log(update.loc);
-          //var diff = update.toDiffSnapshot(sn);
-          var diff = models.IncidentModel.getDiff(incident, update);
-          console.log(diff);
-          diff.should.have.property('incidentId');
-          var snapshot = new models.IncidentSnapshotModel(diff);
-          snapshot.should.have.property('incidentId');
-          snapshot.save(function (err, saved) {
-            should.not.exist(err);
-            assert.notEqual(saved, undefined);
-            assert.notEqual(saved, null);
-            done();
-          });
-        });
+        assert.notEqual(rawUpdate, undefined);
+        assert.notEqual(rawUpdate, null);
+        console.log(rawUpdate);
+        done();
       });
+
+      //models.IncidentModel.update(condition, updates, {runValidators: true}/*etc*/, function (err, raw) {
+      //  should.not.exist(err);
+      //  assert.notEqual(raw, undefined);
+      //  assert.notEqual(raw, null);
+      //  console.log(raw);
+      //  models.IncidentModel.findOne({'_id': incident._id}, function (err, update) {
+      //    should.not.exist(err);
+      //    assert.notEqual(update, undefined);
+      //    assert.notEqual(update, null);
+      //    update.description.should.be.eql(updates.description);
+      //    update.description.should.be.not.eql(incident.description);
+      //    update.state.should.be.eql(updates.state);
+      //    update.tags.forEach(function (tag, i, arr) {
+      //      updates.tags.should.containEql(tag);
+      //    });
+      //    should.equal(update.incidentTarget, null);
+      //    should.equal(update.loc.toString(), updates.loc.id);
+      //    //console.log(update.loc);
+      //    //var diff = update.toDiffSnapshot(sn);
+      //    //var diff = models.IncidentModel.getDiff(incident, update);
+      //    //console.log(diff);
+      //    //diff.should.have.property('incidentId');
+      //    //var snapshot = new models.IncidentSnapshotModel(diff);
+      //    //snapshot.should.have.property('incidentId');
+      //    //snapshot.save(function (err, saved) {
+      //    //  should.not.exist(err);
+      //    //  assert.notEqual(saved, undefined);
+      //    //  assert.notEqual(saved, null);
+      //    done();
+      //    //});
+      //  });
+      //});
     });
 
     it('delete an existing incident', function (done) {
