@@ -9,9 +9,6 @@ var _IncidentModel = null;
 var _stormpath = null;
 var _logger = null;
 
-module.exports = IncidentController;
-
-//function IncidentController(app, stormpath, mongoose) {
 function IncidentController(app, mongoose) {
   var self = this;
   _mongoose = mongoose;
@@ -125,12 +122,7 @@ IncidentController.prototype.put = function (req, res, next) {
   var _id = _updates._id;
   var condition = {'_id': _id};
   delete _updates._id;
-  //var updates = _updates;
-  //console.log('updates: ',updates);
-  //_IncidentModel.update(condition/*condition*/, _updates/*field updates*/, {
-  //  runValidators: true
-  //}/*etc*/, function (err, raw) {
-  //var m = _IncidentModel.hydrate({_id: _id});
+
   _IncidentModel.findOne(condition, function (err, model) {
 
     if (err) {
@@ -143,9 +135,6 @@ IncidentController.prototype.put = function (req, res, next) {
     } else {
       var snapShot = model.toSnapshot();
       var diff = model.toDiffSnapshot(_updates);
-      //_logger.debug("Successfully added User object for " + user.email);
-      //statusCode = 200;
-      //jsonResult = update;
       _IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
 
         if (err) {
@@ -153,8 +142,6 @@ IncidentController.prototype.put = function (req, res, next) {
           statusCode = 409;
           jsonResult = {message: "error", error: errStr};
         } else {
-          //_logger.debug("Successfully added User object for " + user.email);
-          //statusCode = 200;
           jsonResult = rawUpdate;
         }
         res.send(statusCode, jsonResult);
@@ -163,23 +150,6 @@ IncidentController.prototype.put = function (req, res, next) {
       });
     }
   });
-  //_IncidentModel.findByIdAndUpdate(_id, _updates, {runValidators: true}, function (err, update) {
-  //
-  //  if (err) {
-  //    errStr = err.message;
-  //    statusCode = 409;
-  //    jsonResult = {message: "error", error: errStr};
-  //  } else {
-  //    //_logger.debug("Successfully added User object for " + user.email);
-  //    //statusCode = 200;
-  //    jsonResult = update;
-  //  }
-  //  res.send(statusCode, jsonResult);
-  //
-  //  return next();
-  //
-  //});
-
 };
 
-//module.exports = IncidentController;
+module.exports = IncidentController;
