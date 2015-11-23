@@ -27,11 +27,13 @@ module.exports = function (mongoose) {
   );
 
   incidentSnapshotSchema.index({state: 1});
+  incidentSnapshotSchema.index({incidentId: 1});
   incidentSnapshotSchema.index({categoryType: 'text'});
   incidentSnapshotSchema.index({tags: 'text'});
   incidentSnapshotSchema.index({description: 'text'});
   incidentSnapshotSchema.index({sourceIdentity: 1}, {sparse: true});
   incidentSnapshotSchema.index({incidentTarget: 1}, {sparse: true});
+
 
 //TODO: add validate methods
   try {

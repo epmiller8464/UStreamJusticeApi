@@ -127,7 +127,7 @@ describe(testDescription, function () {
     updates.description = 'test update';
     updates.state = models.IncidentStates.LIVE;
     updates.tags = incident.tags.concat('911');
-    updates.incidentTarget = undefined;
+    updates.incidentTarget = null;
     //make sure no change fields arent sent
     updates.sourceType = incident.sourceType;
     updates.loc = helper.getRandomLocations(1)[0]._id;
@@ -153,29 +153,29 @@ describe(testDescription, function () {
 
 testDescription = util.format('DELETE/%s', controllerName);
 
-//describe(testDescription, function () {
-//  //console.log(array[index]);
-//  data.forEach(function (incident, index, array) {
-//
-//    it('should delete an existing incident', function (done) {
-//      request(server)
-//          .delete(PATH + '/' + incident._id)
-//          .end(function (err, res) {
-//            assert.equal(res.statusCode, 204);
-//            var result = res.body;
-//            should.notEqual(result, undefined);
-//            done();
-//          });
-//    });
-//    it('should fail deleting a fake incident', function (done) {
-//      request(server)
-//          .delete(PATH + '/fake')
-//          .end(function (err, res) {
-//            assert.equal(res.statusCode, 404);
-//            var result = res.body;
-//            should.notEqual(result, undefined);
-//            done();
-//          });
-//    });
-//  });
-//});
+describe(testDescription, function () {
+  //console.log(array[index]);
+  data.forEach(function (incident, index, array) {
+
+    it('should delete an existing incident', function (done) {
+      request(server)
+          .delete(PATH + '/' + incident._id)
+          .end(function (err, res) {
+            assert.equal(res.statusCode, 204);
+            var result = res.body;
+            should.notEqual(result, undefined);
+            done();
+          });
+    });
+    it('should fail deleting a fake incident', function (done) {
+      request(server)
+          .delete(PATH + '/fake')
+          .end(function (err, res) {
+            assert.equal(res.statusCode, 404);
+            var result = res.body;
+            should.notEqual(result, undefined);
+            done();
+          });
+    });
+  });
+});

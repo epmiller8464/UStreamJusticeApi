@@ -12,7 +12,6 @@
   "license": "",
   "jshintConfig":{
     "mocha":"true",
-    "strict":"true",
     "camelcase":"true",
     "node":"true",
     "noempty":"true",

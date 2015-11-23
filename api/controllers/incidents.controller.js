@@ -133,8 +133,10 @@ IncidentController.prototype.put = function (req, res, next) {
       return next();
 
     } else {
-      var snapShot = model.toSnapshot();
-      var diff = model.toDiffSnapshot(_updates);
+      //var snapShot = ;
+      //var diff = _IncidentModel.getDiff(model, _updates);
+      //console.log(diff);
+      //var diff = model.toDiffSnapshot(_updates);
       _IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
 
         if (err) {

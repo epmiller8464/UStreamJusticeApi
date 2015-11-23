@@ -2,7 +2,7 @@
  * Created by ghostmac on 11/13/15.
  */
 
-
+var mongoose = require('mongoose');
 var c = require('chance')();
 var should = require('should');
 var assert = require('assert');
@@ -12,6 +12,7 @@ var models = app.models;
 var helper = require('../helpers/TestHelper');
 var count = 1;
 var users = helper.getRandomUsers(count);
+
 
 describe('Mongoose.User', function () {
   "use strict";
@@ -128,22 +129,22 @@ describe('Mongoose.Incident', function () {
         assert.notEqual(i, undefined);
         assert.notEqual(i, null);
         assert.equal(incident, i);
-        var snapshot = new models.IncidentSnapshotModel(i.toSnapshot());
-        snapshot.save(function (err, saved) {
-          should.not.exist(err);
-          assert.notEqual(saved, undefined);
-          assert.notEqual(saved, null);
-          done();
-        });
+        //var snapshot = new models.IncidentSnapshotModel(i.toSnapshot());
+        //snapshot.save(function (err, saved) {
+        //  should.not.exist(err);
+        //  assert.notEqual(saved, undefined);
+        //  assert.notEqual(saved, null);
+        done();
+        //});
       });
     });
 
     it('update an existing incident', function (done) {
       //incident.incidentTarget = undefined;
       var condition = {'_id': incident._id};
-      var sn = incident.toSnapshot(null);
-      sn = incident.toSnapshot(undefined);
-      sn = incident.toSnapshot();
+      //var sn = incident.toSnapshot(null);
+      //sn = incident.toSnapshot(undefined);
+      //sn = incident.toSnapshot();
       var updates = {
         description: 'test update',
         state: models.IncidentStates.LIVE,
@@ -191,10 +192,12 @@ describe('Mongoose.Incident', function () {
           should.equal(update.incidentTarget, null);
           should.equal(update.loc.toString(), updates.loc.id);
           //console.log(update.loc);
-          var diff = update.toDiffSnapshot(sn);
-          //console.log(diff);
-
+          //var diff = update.toDiffSnapshot(sn);
+          var diff = models.IncidentModel.getDiff(incident, update);
+          console.log(diff);
+          diff.should.have.property('incidentId');
           var snapshot = new models.IncidentSnapshotModel(diff);
+          snapshot.should.have.property('incidentId');
           snapshot.save(function (err, saved) {
             should.not.exist(err);
             assert.notEqual(saved, undefined);
@@ -207,7 +210,7 @@ describe('Mongoose.Incident', function () {
 
     it('delete an existing incident', function (done) {
 
-      models.IncidentModel.findByIdAndRemove(incident._id,function(err,doc){
+      models.IncidentModel.findByIdAndRemove(incident._id, function (err, doc) {
         should.not.exist(err);
         assert.notEqual(doc, undefined);
         assert.notEqual(doc, null);

@@ -51,63 +51,60 @@ module.exports = function (mongoose) {
   incidentSchema.index({incidentTarget: 1}, {sparse: true});
 
 
-  incidentSchema.virtual('incidentId').get(function () {
-    return this.id;
-  });
+  incidentSchema.static('getDiff', function (original, modified) {
 
-  incidentSchema.methods.toSnapshot = function (virtuals) {
-    //var snapshot = this.toObject({virtuals: includeVirtuals || true});
-    var options = {versionKey: false, virtuals: u.isBoolean(virtuals) ? virtuals : true};
-    //console.log(options);
-    var snapshot = this.toObject(options);
-    if (options.virtuals)
-      assert.equal(snapshot.incidentId, this._id);
-    delete snapshot.id;
-    delete snapshot._id;
-    assert.equal(snapshot.id, undefined);
-    return snapshot;
-  };
-
-  incidentSchema.methods.toDiffSnapshot = function (snapshot) {
-    var self = this.toSnapshot();
     var diffs = {};
-
-    for (var field in self) {
-      var curr = self[field],
-          snField = snapshot[field];
-
-      if ((curr && snField) && curr.toString() !== snField.toString()) {
-        diffs[field] = curr;
-      } else if ((!snField && curr) || (snField && !curr)) {
-        diffs[field] = curr;
-      }
-      var pt = incidentSchema.pathType(field);
-      if (pt === 'virtual') {
-        diffs[field] = this[field];
+    if (original instanceof mongoose.Model && modified instanceof Object) {
+      var options = {minimize: false};
+      Object.defineProperty(diffs, 'incidentId', {value: original._id.toString(), enumerable: true});
+      var l = original.toObject(options),
+          r = modified;
+      //lKeys = Object.keys(l),
+      //var rKeys = Object.keys(modified);
+      delete l._id;
+      delete r._id;
+      for (var field in l) {
+        if (field in r) {
+          var lv = l[field],
+              rv = r[field];
+          //assert(field in r);
+          lv = lv ? lv.toString() : '';
+          rv = rv ? rv.toString() : '';
+          //console.log('%s: l === v: %s\n%s : %s\n%s : %s', field, lv.valueOf() === rv.valueOf(), lv, rv, typeof lv, typeof rv);
+          if (lv !== rv) {
+            if (rv === '' && l[field] instanceof Object) {
+              rv = null;
+            }
+            diffs[field] = rv;
+          }
+        }
       }
     }
     //console.log(diffs.length);
     return diffs;
-  };
+  });
 
   incidentSchema.post('save', function (doc) {
-    console.log('post save');
-    var snapshot = new IncidentSnapshotModel(doc.toSnapshot());
-    snapshot.save(function (err, saved) {
-      console.log('incident snapshot capture %s',err ? 'FAILED':'SUCCEEDED');
-      //console.log(saved);
+    var raw = doc.toObject();
+    Object.defineProperty(raw, 'incidentId', {value: raw._id.toString(), enumerable: true});
+    var snapshot = new IncidentSnapshotModel(raw);
 
+    //var s = snapshot.save();
+    var s = snapshot.save(function (err, saved) {
+      console.log('incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+      //console.log(saved);
     });
   });
+
   incidentSchema.pre('update', function (next) {
-    console.log('pre update');
-    //console.log(args);
-    //var snapshot = new IncidentSnapshotModel(doc.toSnapshot());
-    //snapshot.save(function (err, saved) {
-    //  console.log('incident snapshot capture %s',err ? 'FAILED':'SUCCEEDED');
-    //  console.log(saved);
-    //});
-    console.log(this._update.$set);
+    var raw = this._update.$set;
+    Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
+    var snapshot = new IncidentSnapshotModel(raw);
+    snapshot.save(function (err, saved) {
+      console.log('update incident snapshot capture %s\n',err ? 'FAILED':'SUCCEEDED');
+      //console.log(saved);
+    });
+    //console.log(this._update.$set);
     next();
   });
 
