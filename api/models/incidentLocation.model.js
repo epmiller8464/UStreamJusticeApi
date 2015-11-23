@@ -19,7 +19,7 @@ module.exports = function (mongoose) {
 
   try {
     // Throws an error if "Name" hasn't been registered
-    mongoose.model("incidentLocation");
+    Model = mongoose.model("incidentLocation");
   } catch (e) {
     Model = mongoose.model('incidentLocation', incidentLocationSchema);
   }

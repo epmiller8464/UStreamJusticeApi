@@ -48,7 +48,7 @@ IncidentController.prototype.incidentIdGet = function (req, res, next) {
   //console.log('IncidentIdGet');
   res.setHeader('Content-Type', 'application/json');
 
-  var _id = req.params['id'];
+  var _id = req.params.id;
   _IncidentModel.findOne({'_id': _id}, function (err, incident) {
     if (err) {
       errStr = err.message;
@@ -98,7 +98,7 @@ IncidentController.prototype.delete = function (req, res, next) {
   var errStr = null;
   var statusCode = 204;
   var jsonResult = null;
-  var _id = req.params['id'];
+  var _id = req.params.id;
 
   _IncidentModel.findByIdAndRemove(_id, function (err, doc) {
     if (err) {

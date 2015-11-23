@@ -128,7 +128,7 @@ describe('Mongoose.Incident', function () {
         assert.notEqual(i, undefined);
         assert.notEqual(i, null);
         assert.equal(incident, i);
-        var snapshot = models.IncidentSnapshotModel(i.toSnapshot());
+        var snapshot = new models.IncidentSnapshotModel(i.toSnapshot());
         snapshot.save(function (err, saved) {
           should.not.exist(err);
           assert.notEqual(saved, undefined);
@@ -194,7 +194,7 @@ describe('Mongoose.Incident', function () {
           var diff = update.toDiffSnapshot(sn);
           //console.log(diff);
 
-          var snapshot = models.IncidentSnapshotModel(diff);
+          var snapshot = new models.IncidentSnapshotModel(diff);
           snapshot.save(function (err, saved) {
             should.not.exist(err);
             assert.notEqual(saved, undefined);

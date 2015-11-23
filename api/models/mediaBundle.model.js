@@ -18,7 +18,7 @@ module.exports = function (mongoose) {
 
   try {
     // Throws an error if "Name" hasn't been registered
-    mongoose.model("mediaBundle");
+    Model = mongoose.model("mediaBundle");
   } catch (e) {
     Model = mongoose.model('mediaBundle', mediaBundleSchema);
   }

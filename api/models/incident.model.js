@@ -114,7 +114,7 @@ module.exports = function (mongoose) {
 //TODO: add validate methods
   try {
     // Throws an error if "Name" hasn't been registered
-    mongoose.model("incident");
+    Model = mongoose.model("incident");
   } catch (e) {
     Model = mongoose.model('incident', incidentSchema);
   }

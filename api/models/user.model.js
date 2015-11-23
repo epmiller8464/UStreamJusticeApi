@@ -36,7 +36,7 @@ module.exports = function (mongoose) {
 
   try {
     // Throws an error if "Name" hasn't been registered
-    mongoose.model("user");
+    Model = mongoose.model("user");
   } catch (e) {
     Model = mongoose.model('user', userSchema);
   }
