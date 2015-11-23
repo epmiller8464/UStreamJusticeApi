@@ -64,6 +64,6 @@
   "scripts": {
     "start": "node app.js",
     "test": "grunt",
-    "lint": "jshint api test app.js"
+    "lint": "jshint api test"
   }
 }
