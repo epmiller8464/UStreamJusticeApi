@@ -175,7 +175,7 @@ describe('Mongoose.Incident', function () {
           //incidentTarget: undefined,
           //make sure no change fields arent sent
           sourceType: incident.sourceType,
-          loc: helper.getRandomLocations(n)[c.integer({min: 0, max: n+1})]
+          loc: helper.getRandomLocations(n)[c.integer({min: 0, max: n + 1})]
         };
 
         models.IncidentModel.findOneAndUpdate(condition, {$set: updates}, {runValidators: true}, function (err, rawUpdate) {
@@ -189,8 +189,11 @@ describe('Mongoose.Incident', function () {
           //});
         });
       });
+
       n--;
     } while (n >= 0);
+
+
 
     //it('delete an existing incident', function (done) {
     //

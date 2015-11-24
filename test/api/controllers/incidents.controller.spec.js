@@ -4,7 +4,7 @@ var assert = require('assert');
 var util = require('util');
 var server = require('../../../app');
 var models = server.models;
-var chance = require('chance')();
+var c = require('chance')();
 var helper = require('../../helpers/TestHelper');
 var config = require('../../../config/environment');
 var controllerName = "incidents";
@@ -16,7 +16,6 @@ var data = helper.getRandomIncidents(count);
 count.should.eql(data.length);
 
 var testDescription = util.format('POST/%s', controllerName);
-
 describe(testDescription, function () {
   data.forEach(function (incident, index, array) {
     it('should add a new incident', function (done) {
@@ -54,9 +53,7 @@ describe(testDescription, function () {
   });
 });
 
-
 testDescription = util.format('GET/%s', controllerName);
-
 describe(testDescription, function () {
 
   it('should return all incidents', function (done) {
@@ -117,37 +114,53 @@ describe(testDescription, function () {
 
 });
 
-
 testDescription = util.format('PUT/%s', controllerName);
-
 describe(testDescription, function () {
   data.forEach(function (incident, index, array) {
-    //var updates = {
-    var updates = {};//incident.toObject();
-    updates.description = 'test update';
-    updates.state = models.IncidentStates.LIVE;
-    updates.tags = incident.tags.concat('911');
-    updates.incidentTarget = null;
-    //make sure no change fields arent sent
-    updates.sourceType = incident.sourceType;
-    updates.loc = helper.getRandomLocations(1)[0]._id;
-    updates._id = incident._id;
-    //};
-    it('should update an existing incident', function (done) {
-      request(server)
-          .put(PATH)
-          .type('application/json')
-          .send(updates)
-          .end(function (err, res) {
-            assert.equal(res.statusCode, 200);
-            var result = res.body;
-            //console.log(res.statusCode);
-            //console.log(result);
-            should.notEqual(result, undefined);
-            //result.should.have.property('ok');
-            done();
-          });
-    });
+    var n = c.integer({min: 0, max: 1000});
+    do {
+      //console.log(n);
+      //var updates = {
+      //var updates = {};//incident.toObject();
+      //updates.description = 'test update';
+      //updates.state = models.IncidentStates.LIVE;
+      //updates.tags = incident.tags.concat('911');
+      //updates.incidentTarget = null;
+      //make sure no change fields arent sent
+      //updates.sourceType = incident.sourceType;
+      //updates.loc = helper.getRandomLocations(1)[0]._id;
+      //updates._id = incident._id;
+
+      //};
+      it('should update an existing incident', function (done) {
+        var updates = {
+          //description: 'test update',
+          description: c.sentence(),
+          state: models.IncidentStates.LIVE,
+          tags: incident.tags.concat('911' + n),
+          //incidentTarget: undefined,
+          //make sure no change fields arent sent
+          sourceType: incident.sourceType,
+          loc: helper.getRandomLocations(n)[c.integer({min: 0, max: n + 1})],
+          _id: incident._id
+        };
+
+        request(server)
+            .put(PATH)
+            .type('application/json')
+            .send(updates)
+            .end(function (err, res) {
+              assert.equal(res.statusCode, 200);
+              var result = res.body;
+              //console.log(res.statusCode);
+              //console.log(result);
+              should.notEqual(result, undefined);
+              //result.should.have.property('ok');
+              done();
+            });
+      });
+      n--;
+    } while (n >= 0);
   });
 });
 
