@@ -119,19 +119,6 @@ describe(testDescription, function () {
   data.forEach(function (incident, index, array) {
     var n = c.integer({min: 0, max: 1000});
     do {
-      //console.log(n);
-      //var updates = {
-      //var updates = {};//incident.toObject();
-      //updates.description = 'test update';
-      //updates.state = models.IncidentStates.LIVE;
-      //updates.tags = incident.tags.concat('911');
-      //updates.incidentTarget = null;
-      //make sure no change fields arent sent
-      //updates.sourceType = incident.sourceType;
-      //updates.loc = helper.getRandomLocations(1)[0]._id;
-      //updates._id = incident._id;
-
-      //};
       it('should update an existing incident', function (done) {
         var updates = {
           //description: 'test update',
