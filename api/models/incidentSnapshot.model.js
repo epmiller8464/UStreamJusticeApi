@@ -20,7 +20,7 @@ module.exports = function (mongoose) {
         tags: {type: [String], index: true}, // field level
         description: {type: String, trim: true},
         mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
-        snapshotTime: {type: Number},
+        snapshotTime: {type: Number, required: true, default: Date.now()},
         incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', required: true}
       },
       {collection: 'incidentSnapshot'}

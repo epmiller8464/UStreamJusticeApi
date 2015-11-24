@@ -39,7 +39,8 @@ module.exports = function (mongoose) {
         description: {type: String, trim: true},
         //incidentHistory: {type: []},
         mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
-        snapshots: [{type: mongoose.Schema.Types.ObjectId, ref: 'incidentSnapshot'}]
+        //snapshots: [IncidentSnapshotModel.schema]
+        snapshots: {type: [mongoose.Schema.Types.ObjectId], ref: 'incidentSnapshot'}
       },
       {collection: 'incident'}
   );
@@ -121,15 +122,49 @@ module.exports = function (mongoose) {
   //  next();
   //});
 
+  incidentSchema.pre('save', function (next) {
+
+
+    var raw = this.toObject();
+    //Object.defineProperty(raw, 'incidentId', {value: raw._id.toString(), enumerable: true});
+    var snapshot = new IncidentSnapshotModel(raw);
+    this.snapshots.push(snapshot._id);
+    //var s = snapshot.save(function (err, saved) {
+    //  console.log('post -> post: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+    //  console.log(saved);
+    //  Model.findOne({_id: saved.incidentId}).populate('snapshots').exec(function (err, incid) {
+    //
+    //    console.log(err);
+    //    console.log(incid);
+    //  });
+    //doc.save(function (err, d) {
+    //  console.log(err);
+    //  console.log(d);
+    //});
+    //});
+    //console.log(this.snapshots);
+    //console.log(this);
+    next();
+  });
   incidentSchema.post('save', function (doc) {
     var raw = doc.toObject();
     Object.defineProperty(raw, 'incidentId', {value: raw._id.toString(), enumerable: true});
     var snapshot = new IncidentSnapshotModel(raw);
-
+    //snapshot.incidentId = doc._id;
     //var s = snapshot.save();
-    var s = snapshot.save(function (err, saved) {
+    snapshot.save(function (err, saved) {
       console.log('post -> post: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
       //console.log(saved);
+      //Model.findOne({_id: saved.incidentId}).populate('snapshots').exec(function (err, incid) {
+      //
+      //  console.log(err);
+      //  console.log(incid);
+      //});
+      //doc.$set({snapshots: doc.snapshots.push(saved._id)});
+      //doc.save(function (err, d) {
+      //  console.log(err);
+      //  console.log(d);
+      //});
     });
   });
 
@@ -141,15 +176,21 @@ module.exports = function (mongoose) {
     if (diffs) {
       Object.defineProperty(raw, 'incidentId', {value: doc._id.toString(), enumerable: true});
       var snapshot = new IncidentSnapshotModel(raw);
+      //doc.snapshots.push(snapshot);
       //var s = snapshot.save();
       var s = snapshot.save(function (err, saved) {
         console.log('post -> findOneAndUpdate: snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
-        //console.log(saved);
-        //throw new Error();
-      }).then(function (doc) {
 
-        console.log(doc);
-
+      }).then(function () {
+        doc.snapshots.push(snapshot._id);
+        Model.update({_id: doc._id}, {$set: {snapshots: doc.snapshots}}, {
+        //Model.update({_id: doc._id}, {$set: {snapshots: [snapshot._id]}}, {
+          //overwrite: true,
+          runValidators: false
+        }, function (err, d) {
+          console.log(err);
+          console.log('test:%s', d);
+        });
       });
     } else {
       console.log('no diffs found??');

@@ -139,84 +139,58 @@ describe('Mongoose.Incident', function () {
       });
     });
 
-    it('update an existing incident', function (done) {
-      //incident.incidentTarget = undefined;
-      var condition = {'_id': incident._id};
-      //var sn = incident.toSnapshot(null);
-      //sn = incident.toSnapshot(undefined);
-      //sn = incident.toSnapshot();
-      var badUpdates = {
-        description: 'test update',
-        state: models.IncidentStates.LIVE,
-        tags: incident.tags.concat('911'),
-        incidentTarget: undefined,
-        sourceIdentity: undefined,
-        //make sure no change fields arent sent
-        sourceType: incident.sourceType,
-        loc: helper.getRandomLocations(1)[0]
-      };
+    var n = c.integer({min: 20000, max: 100000});
+    do {
+      //console.log(n);
+      it('update an existing incident', function (done) {
+        //incident.incidentTarget = undefined;
+        var condition = {'_id': incident._id};
+        //var sn = incident.toSnapshot(null);
+        //sn = incident.toSnapshot(undefined);
+        //sn = incident.toSnapshot();
+        var badUpdates = {
+          description: 'test update',
+          state: models.IncidentStates.LIVE,
+          tags: incident.tags.concat('911'),
+          incidentTarget: undefined,
+          sourceIdentity: undefined,
+          //make sure no change fields arent sent
+          sourceType: incident.sourceType,
+          loc: helper.getRandomLocations(1)[0]
+        };
 
-      models.IncidentModel.findOneAndUpdate(condition, {$set: badUpdates}, {runValidators: true}, function (err, rawUpdate) {
-        should.exist(err);
-        //assert.notEqual(rawUpdate, undefined);
-        //assert.notEqual(rawUpdate, null);
-        //console.log(err);
-        //console.log(rawUpdate);
-        //done();
+        //models.IncidentModel.findOneAndUpdate(condition, {$set: badUpdates}, {runValidators: true}, function (err, rawUpdate) {
+        //  should.exist(err);
+        //  //assert.notEqual(rawUpdate, undefined);
+        //  //assert.notEqual(rawUpdate, null);
+        //  //console.log(err);
+        //  //console.log(rawUpdate);
+        //  //done();
+        //});
+        var updates = {
+          //description: 'test update',
+          description: c.sentence(),
+          state: models.IncidentStates.LIVE,
+          tags: incident.tags.concat('911' + n),
+          //incidentTarget: undefined,
+          //make sure no change fields arent sent
+          sourceType: incident.sourceType,
+          loc: helper.getRandomLocations(n)[c.integer({min: 0, max: n+1})]
+        };
+
+        models.IncidentModel.findOneAndUpdate(condition, {$set: updates}, {runValidators: true}, function (err, rawUpdate) {
+          should.not.exist(err);
+          assert.notEqual(rawUpdate, undefined);
+          assert.notEqual(rawUpdate, null);
+          //console.log(rawUpdate);
+          //models.IncidentModel.populate(rawUpdate, {path: 'snapshots'}, function (err, data) {
+          //  console.log(data);
+          done();
+          //});
+        });
       });
-      var updates = {
-        description: 'test update',
-        state: models.IncidentStates.LIVE,
-        tags: incident.tags.concat('911'),
-        incidentTarget: undefined,
-        //make sure no change fields arent sent
-        sourceType: incident.sourceType,
-        loc: helper.getRandomLocations(1)[0]
-      };
-
-      models.IncidentModel.findOneAndUpdate(condition, {$set: updates}, {runValidators: true}, function (err, rawUpdate) {
-        should.not.exist(err);
-        assert.notEqual(rawUpdate, undefined);
-        assert.notEqual(rawUpdate, null);
-        //console.log(rawUpdate);
-
-        //rawUpdate.populate('snapshots')
-        done();
-      });
-
-      //models.IncidentModel.update(condition, updates, {runValidators: true}/*etc*/, function (err, raw) {
-      //  should.not.exist(err);
-      //  assert.notEqual(raw, undefined);
-      //  assert.notEqual(raw, null);
-      //  console.log(raw);
-      //  models.IncidentModel.findOne({'_id': incident._id}, function (err, update) {
-      //    should.not.exist(err);
-      //    assert.notEqual(update, undefined);
-      //    assert.notEqual(update, null);
-      //    update.description.should.be.eql(updates.description);
-      //    update.description.should.be.not.eql(incident.description);
-      //    update.state.should.be.eql(updates.state);
-      //    update.tags.forEach(function (tag, i, arr) {
-      //      updates.tags.should.containEql(tag);
-      //    });
-      //    should.equal(update.incidentTarget, null);
-      //    should.equal(update.loc.toString(), updates.loc.id);
-      //    //console.log(update.loc);
-      //    //var diff = update.toDiffSnapshot(sn);
-      //    //var diff = models.IncidentModel.getDiff(incident, update);
-      //    //console.log(diff);
-      //    //diff.should.have.property('incidentId');
-      //    //var snapshot = new models.IncidentSnapshotModel(diff);
-      //    //snapshot.should.have.property('incidentId');
-      //    //snapshot.save(function (err, saved) {
-      //    //  should.not.exist(err);
-      //    //  assert.notEqual(saved, undefined);
-      //    //  assert.notEqual(saved, null);
-      //    done();
-      //    //});
-      //  });
-      //});
-    });
+      n--;
+    } while (n >= 0);
 
     //it('delete an existing incident', function (done) {
     //
