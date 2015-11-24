@@ -38,7 +38,8 @@ module.exports = function (mongoose) {
         tags: {type: [String], index: true}, // field level
         description: {type: String, trim: true},
         //incidentHistory: {type: []},
-        mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'}
+        mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
+        snapshots: [{type: mongoose.Schema.Types.ObjectId, ref: 'incidentSnapshot'}]
       },
       {collection: 'incident'}
   );
@@ -57,12 +58,11 @@ module.exports = function (mongoose) {
         original instanceof Object ? original : undefined;
 
     var _modRaw = modified instanceof Object ? modified : undefined;
-    var diffs = {};
+    var diffs = undefined;
     if (_ogRaw && _modRaw) {
-      var options = {minimize: false};
-      Object.defineProperty(diffs, 'incidentId', {value: original._id.toString(), enumerable: true});
       var l = _ogRaw,//original.toObject(options),
-          r = _modRaw;
+          r = _modRaw,
+          _id = original._id.toString();
       //lKeys = Object.keys(l),
       //var rKeys = Object.keys(modified);
       delete l._id;
@@ -79,6 +79,12 @@ module.exports = function (mongoose) {
             if (rv === '' && l[field] instanceof Object) {
               rv = null;
             }
+
+            if (!diffs) {
+              diffs = {};
+              Object.defineProperty(diffs, 'incidentId', {value: _id, enumerable: true});
+            }
+
             diffs[field] = rv;
           }
         }
@@ -89,32 +95,31 @@ module.exports = function (mongoose) {
   });
 
 
-  incidentSchema.pre('findOneAndUpdate', function (next) {
+  //incidentSchema.pre('findOneAndUpdate', function (next) {
+  //  var raw = this._update.$set;
+  //  //var _doc = this._doc.toObject();
+  //  Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
+  //  var snapshot = new IncidentSnapshotModel(raw);
+  //  snapshot.save(function (err, saved) {
+  //    console.log('pre -> findOneAndUpdate: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+  //    //console.log(saved);
+  //  });
+  //  //console.log(this._update.$set);
+  //  next();
+  //});
 
-    var raw = this._update.$set;
-    //var _doc = this._doc.toObject();
-    Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
-    var snapshot = new IncidentSnapshotModel(raw);
-    snapshot.save(function (err, saved) {
-      console.log('pre -> findOneAndUpdate: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
-      //console.log(saved);
-    });
-    //console.log(this._update.$set);
-    next();
-  });
-
-  incidentSchema.pre('update', function (next) {
-    var raw = this._update.$set;
-
-    Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
-    var snapshot = new IncidentSnapshotModel(raw);
-    snapshot.save(function (err, saved) {
-      console.log('pre -> update: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
-      //console.log(saved);
-    });
-    //console.log(this._update.$set);
-    next();
-  });
+  //incidentSchema.pre('update', function (next) {
+  //  var raw = this._update.$set;
+  //
+  //  Object.defineProperty(raw, 'incidentId', {value: this._conditions._id.toString(), enumerable: true});
+  //  var snapshot = new IncidentSnapshotModel(raw);
+  //  snapshot.save(function (err, saved) {
+  //    console.log('pre -> update: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+  //    //console.log(saved);
+  //  });
+  //  //console.log(this._update.$set);
+  //  next();
+  //});
 
   incidentSchema.post('save', function (doc) {
     var raw = doc.toObject();
@@ -132,16 +137,23 @@ module.exports = function (mongoose) {
     var raw = this._update.$set;
     var _doc = doc.toObject();
     var diffs = Model.getDiff(_doc, raw);
-    console.log(diffs);
-    Object.defineProperty(raw, 'incidentId', {value: doc._id.toString(), enumerable: true});
+    //console.log(diffs);
+    if (diffs) {
+      Object.defineProperty(raw, 'incidentId', {value: doc._id.toString(), enumerable: true});
+      var snapshot = new IncidentSnapshotModel(raw);
+      //var s = snapshot.save();
+      var s = snapshot.save(function (err, saved) {
+        console.log('post -> findOneAndUpdate: snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
+        //console.log(saved);
+        //throw new Error();
+      }).then(function (doc) {
 
-    var snapshot = new IncidentSnapshotModel(raw);
+        console.log(doc);
 
-    //var s = snapshot.save();
-    var s = snapshot.save(function (err, saved) {
-      console.log('post -> findOneAndUpdate: snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
-      console.log(saved);
-    });
+      });
+    } else {
+      console.log('no diffs found??');
+    }
   });
 
 //TODO: add validate methods

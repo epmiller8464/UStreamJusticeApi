@@ -123,48 +123,48 @@ IncidentController.prototype.put = function (req, res, next) {
   var condition = {'_id': _id};
   delete _updates._id;
 
-  _IncidentModel.findOne(condition, function (err, model) {
+  //_IncidentModel.findOne(condition, function (err, model) {
+  //
+  //  if (err) {
+  //    errStr = err.message;
+  //    statusCode = 409;
+  //    jsonResult = {message: "error", error: errStr};
+  //    res.send(statusCode, jsonResult);
+  //    return next();
+  //
+  //  } else {
+  //    //var snapShot = ;
+  //    //var diff = _IncidentModel.getDiff(model, _updates);
+  //    //console.log(diff);
+  //    //var diff = model.toDiffSnapshot(_updates);
+  //    //_IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
+  //    //
+  //    //  if (err) {
+  //    //    errStr = err.message;
+  //    //    statusCode = 409;
+  //    //    jsonResult = {message: "error", error: errStr};
+  //    //  } else {
+  //    //    jsonResult = rawUpdate;
+  //    //  }
+  //    //  res.send(statusCode, jsonResult);
+  //    //
+  //    //  return next();
+  //    //}).then(function(){
+  //    //_IncidentModel.findOneAndUpdate(condition,  {runValidators: true}, function (err, rawUpdate) {
+  //  }
+  //});
+  _IncidentModel.findOneAndUpdate(condition, {$set: _updates}, {runValidators: true}, function (err, rawUpdate) {
 
     if (err) {
       errStr = err.message;
       statusCode = 409;
       jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-      return next();
-
     } else {
-      //var snapShot = ;
-      //var diff = _IncidentModel.getDiff(model, _updates);
-      //console.log(diff);
-      //var diff = model.toDiffSnapshot(_updates);
-      //_IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
-      //
-      //  if (err) {
-      //    errStr = err.message;
-      //    statusCode = 409;
-      //    jsonResult = {message: "error", error: errStr};
-      //  } else {
-      //    jsonResult = rawUpdate;
-      //  }
-      //  res.send(statusCode, jsonResult);
-      //
-      //  return next();
-      //}).then(function(){
-      //_IncidentModel.findOneAndUpdate(condition,  {runValidators: true}, function (err, rawUpdate) {
-      _IncidentModel.findOneAndUpdate(condition, {$set: _updates}, {runValidators: true}, function (err, rawUpdate) {
-
-        if (err) {
-          errStr = err.message;
-          statusCode = 409;
-          jsonResult = {message: "error", error: errStr};
-        } else {
-          jsonResult = rawUpdate;
-        }
-        res.send(statusCode, jsonResult);
-
-        return next();
-      });
+      jsonResult = rawUpdate;
     }
+    res.send(statusCode, jsonResult);
+
+    return next();
   });
 };
 

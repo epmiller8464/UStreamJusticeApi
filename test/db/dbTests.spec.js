@@ -145,6 +145,25 @@ describe('Mongoose.Incident', function () {
       //var sn = incident.toSnapshot(null);
       //sn = incident.toSnapshot(undefined);
       //sn = incident.toSnapshot();
+      var badUpdates = {
+        description: 'test update',
+        state: models.IncidentStates.LIVE,
+        tags: incident.tags.concat('911'),
+        incidentTarget: undefined,
+        sourceIdentity: undefined,
+        //make sure no change fields arent sent
+        sourceType: incident.sourceType,
+        loc: helper.getRandomLocations(1)[0]
+      };
+
+      models.IncidentModel.findOneAndUpdate(condition, {$set: badUpdates}, {runValidators: true}, function (err, rawUpdate) {
+        should.exist(err);
+        //assert.notEqual(rawUpdate, undefined);
+        //assert.notEqual(rawUpdate, null);
+        //console.log(err);
+        //console.log(rawUpdate);
+        //done();
+      });
       var updates = {
         description: 'test update',
         state: models.IncidentStates.LIVE,
@@ -154,44 +173,14 @@ describe('Mongoose.Incident', function () {
         sourceType: incident.sourceType,
         loc: helper.getRandomLocations(1)[0]
       };
-      /* state: {
-       type: String, required: true
-       },
-       loc: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
-       categoryType: {type: String, trim: true, uppercase: true},
-       incidentDate: {type: Date, default: Date.now},
-       hammertime: {type: Number, required: true, default: Date.now()},
-       endHammertime: {type: Number},
-       lastModified: {type: Number, required: true, default: Date.now()},
-       sourceIdentity: {type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
-       sourceType: {
-       type: String,
-       },
-       incidentTarget: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
-       tags: {type: [String], index: true}, // field level
-       description: {type: String, trim: true},
-       //incidentHistory: {type: []},
-       mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
-       snapshotTime: {type: Number, required: true, default: Date.now()},
-       incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', require: true},*/
-      //models.IncidentModel.findOneAndUpdate(condition, {$set: _updates}, function (err, rawUpdate) {
-      //
-      //  if (err) {
-      //    errStr = err.message;
-      //    statusCode = 409;
-      //    jsonResult = {message: "error", error: errStr};
-      //  } else {
-      //    jsonResult = rawUpdate;
-      //  }
-      //  res.send(statusCode, jsonResult);
-      //
-      //  return next();
-      //}).then(function () {};
+
       models.IncidentModel.findOneAndUpdate(condition, {$set: updates}, {runValidators: true}, function (err, rawUpdate) {
         should.not.exist(err);
         assert.notEqual(rawUpdate, undefined);
         assert.notEqual(rawUpdate, null);
-        console.log(rawUpdate);
+        //console.log(rawUpdate);
+
+        //rawUpdate.populate('snapshots')
         done();
       });
 
@@ -229,16 +218,16 @@ describe('Mongoose.Incident', function () {
       //});
     });
 
-    it('delete an existing incident', function (done) {
-
-      models.IncidentModel.findByIdAndRemove(incident._id, function (err, doc) {
-        should.not.exist(err);
-        assert.notEqual(doc, undefined);
-        assert.notEqual(doc, null);
-        //console.log(err,doc);
-        done();
-      });
-    });
+    //it('delete an existing incident', function (done) {
+    //
+    //  models.IncidentModel.findByIdAndRemove(incident._id, function (err, doc) {
+    //    should.not.exist(err);
+    //    assert.notEqual(doc, undefined);
+    //    assert.notEqual(doc, null);
+    //    //console.log(err,doc);
+    //    done();
+    //  });
+    //});
   });
 });
 //
