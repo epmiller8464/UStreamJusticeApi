@@ -5,7 +5,7 @@
 //var validator = require('validator');
 //var _mongoose = null;
 //var _models = null;
-//var _UserModel = null;
+//var _mediaBundleModel = null;
 //var _stormpath = null;
 //var _logger = null;
 //
@@ -17,7 +17,7 @@
 //  //_models = app.get('readerModels');
 //  _models = app.models;//require('../models/models')(mongoose);
 //
-//  _UserModel = _models.UserModel;
+//  _mediaBundleModel = _models.UserModel;
 //  //_stormpath = stormpath;
 //  //_logger = app.get('readerLogger');
 //}
@@ -60,7 +60,7 @@
 ////    res.json({error: 'Invalid email format'})
 ////    return;
 ////  }
-////  _UserModel.find({'email': req.param('email')}, function dupeEmail(err, results) {
+////  _mediaBundleModel.find({'email': req.param('email')}, function dupeEmail(err, results) {
 ////    if (err) {
 ////      _logger.debug("Error from dupeEmail check");
 ////      console.dir(err);
@@ -97,7 +97,7 @@
 ////                  + "firstName=" + acc.givenName
 ////                  + ", lastName=" + acc.surname
 ////                  + ", email=" + acc.email);
-////              var newUser = new _UserModel(
+////              var newUser = new _mediaBundleModel(
 ////                  {
 ////                    active: true,
 ////                    email: acc.email,
@@ -130,7 +130,7 @@
 //UsersController.prototype.get = function (req, res, next) {
 //  //var userId = req.swagger.params['user-id'].value;
 //
-//  var result = new _UserModel({
+//  var result = new _mediaBundleModel({
 //    active: true,
 //    email: "testuser1@example.com",
 //    firstName: "Test",
@@ -165,7 +165,7 @@
 //  res.setHeader('Content-Type', 'application/json');
 //
 //  var email = req.params['email'];
-//  _UserModel.findOne({'email': email}, function (err, user) {
+//  _mediaBundleModel.findOne({'email': email}, function (err, user) {
 //    if (err) {
 //      errStr = err.message;
 //      res.status(400);
@@ -192,7 +192,7 @@
 //
 //  var user = req.body;
 //  //console.debug(util.inspect(user));
-//  var newUser = new _UserModel(user);
+//  var newUser = new _mediaBundleModel(user);
 //  res.setHeader('Content-Type', 'application/json');
 //
 //  newUser.save(function (err, user) {
@@ -220,10 +220,10 @@
 //  var statusCode = 200;
 //  var jsonResult = null;
 //  //console.log(util.inspect(_user));
-//  //var newUser = new _UserModel(user);
+//  //var newUser = new _mediaBundleModel(user);
 //  var email = req.params['email'];
 //
-//  _UserModel.findOne({'email': email}, function (err, user) {
+//  _mediaBundleModel.findOne({'email': email}, function (err, user) {
 //    if (err) {
 //      errStr = err.message;
 //      //res.status(400);
@@ -248,7 +248,7 @@
 //      statusCode = 200;
 //      //jsonResult = user;
 //      //res.send(user);
-//      //var newUser = new _UserModel({
+//      //var newUser = new _mediaBundleModel({
 //      user.remove(function (err, user) {
 //        if (err) {
 //          errStr = err.message;
@@ -270,7 +270,7 @@
 //  });
 //
 //
-//  //var newUser = new _UserModel({
+//  //var newUser = new _mediaBundleModel({
 //  //  active: user.active,
 //  //  email: user.email,
 //  //  firstName: user.firstName,
@@ -292,9 +292,9 @@
 //  var _user = req.body;
 //  var email = _user.email;
 //  //console.log(util.inspect(_user));
-//  //var newUser = new _UserModel(user);
+//  //var newUser = new _mediaBundleModel(user);
 //
-//  _UserModel.findOne({'email': email}, function (err, user) {
+//  _mediaBundleModel.findOne({'email': email}, function (err, user) {
 //    if (err) {
 //      errStr = err.message;
 //      //res.status(400);
@@ -319,7 +319,7 @@
 //      statusCode = 200;
 //      //jsonResult = user;
 //      //res.send(user);
-//      //var newUser = new _UserModel({
+//      //var newUser = new _mediaBundleModel({
 //      user.active = _user.active;
 //      user.email = _user.email;
 //      user.firstName = _user.firstName;
@@ -350,7 +350,7 @@
 //  });
 //
 //
-//  //var newUser = new _UserModel({
+//  //var newUser = new _mediaBundleModel({
 //  //  active: user.active,
 //  //  email: user.email,
 //  //  firstName: user.firstName,

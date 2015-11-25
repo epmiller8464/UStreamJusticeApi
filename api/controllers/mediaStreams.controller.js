@@ -1,13 +1,9 @@
 'use strict';
 
-var _ = require('lodash');
 var util = require('util');
-var validator = require('validator');
 var _mongoose = null;
 var _models = null;
-var _UserModel = null;
-var _stormpath = null;
-var _logger = null;
+var _mediaBundleModel = null;
 
 module.exports = MediaStreamsController;
 
@@ -15,7 +11,7 @@ function MediaStreamsController(app, mongoose) {
   var self = this;
   _mongoose = mongoose;
   _models = app.models;//require('../models/models')(mongoose);
-  _UserModel = _models.UserModel;
+  _mediaBundleModel = _models.MediaBundleModel;
   self.path = 'mediaStreams';
 }
 
@@ -25,7 +21,7 @@ MediaStreamsController.prototype.get = function (req, res, next) {
   var statusCode = 200;
   var jsonResult = null;
 
-  _UserModel.find(function (err, users) {
+  _mediaBundleModel.find(function (err, users) {
 
     if (err) {
       errStr = err.message;
@@ -41,21 +37,21 @@ MediaStreamsController.prototype.get = function (req, res, next) {
 
 };
 
-MediaStreamsController.prototype.userIdGet = function (req, res, next) {
+MediaStreamsController.prototype.incidentIdGet = function (req, res, next) {
 
   var errStr = null;
   var statusCode = 200;
   var jsonResult = null;
   res.setHeader('Content-Type', 'application/json');
 
-  var email = req.params.email;
-  _UserModel.findOne({'email': email}, function (err, user) {
+  var incidentId = req.params.incidentId;
+  _mediaBundleModel.findOne({'incidentId': incidentId}, function (err, user) {
     if (err) {
       errStr = err.message;
       statusCode = 400;
       jsonResult = {message: "error", error: errStr};
     } else if (typeof user === 'undefined' || user === null) {
-      errStr = util.format('user with email:%s could not be found.', email);
+      errStr = util.format('user with incidentId:%s could not be found.', incidentId);
       statusCode = 400;
       jsonResult = {message: "error", error: errStr};
 
@@ -72,7 +68,7 @@ MediaStreamsController.prototype.userIdGet = function (req, res, next) {
 MediaStreamsController.prototype.post = function (req, res, next) {
 
   var updates = req.body;
-  var userUpdates = new _UserModel(updates);
+  var userUpdates = new _mediaBundleModel(updates);
   var errStr = null;
   var statusCode = 201;
   var jsonResult = null;
@@ -97,7 +93,7 @@ MediaStreamsController.prototype.delete = function (req, res, next) {
   var statusCode = 200;
   var jsonResult = null;
   var email = req.params.email;
-  _UserModel.findOne({'email': email}, function (err, user) {
+  _mediaBundleModel.findOne({'email': email}, function (err, user) {
     if (err) {
       errStr = err.message;
       statusCode = 400;
@@ -140,7 +136,7 @@ MediaStreamsController.prototype.put = function (req, res, next) {
   var email = updates.email;
   var condition = {'email': email};
   delete updates._id;
-  _UserModel.update(condition/*condition*/, updates/*field updates*/, {
+  _mediaBundleModel.update(condition/*condition*/, updates/*field updates*/, {
     runValidators: true
   }/*etc*/, function (err, raw) {
 
@@ -199,7 +195,7 @@ module.exports = MediaStreamsController;
  res.json({error: 'Invalid email format'})
  return;
  }
- _UserModel.find({'email': req.param('email')}, function dupeEmail(err, results) {
+ _mediaBundleModel.find({'email': req.param('email')}, function dupeEmail(err, results) {
  if (err) {
  _logger.debug("Error from dupeEmail check");
  console.dir(err);
@@ -236,7 +232,7 @@ module.exports = MediaStreamsController;
  + "firstName=" + acc.givenName
  + ", lastName=" + acc.surname
  + ", email=" + acc.email);
- var newUser = new _UserModel(
+ var newUser = new _mediaBundleModel(
  {
  active: true,
  email: acc.email,
