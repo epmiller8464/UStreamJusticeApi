@@ -43,29 +43,26 @@ IncidentController.prototype.get = function (req, res, next) {
 IncidentController.prototype.incidentIdGet = function (req, res, next) {
 
   var errStr = null;
-  var resultStatus = 200;
-  var resultJSON = null;
-  //console.log('IncidentIdGet');
+  var statusCode = 200;
+  var jsonResult = null;
   res.setHeader('Content-Type', 'application/json');
 
   var _id = req.params.id;
   _IncidentModel.findOne({'_id': _id}, function (err, incident) {
     if (err) {
       errStr = err.message;
-      res.status(400);
-      resultJSON = {message: "error", error: errStr};
+      statusCode = 400;
+      jsonResult = {message: "error", error: errStr};
     } else if (typeof incident === 'undefined' || incident === null) {
       errStr = util.format('Incident with _id:%s could not be found.', _id);
-      res.status(400);
-      resultJSON = {message: "error", error: errStr};
+      statusCode = 400;
+      jsonResult = {message: "error", error: errStr};
 
     } else {
-      res.status(200);
-      resultJSON = incident;
-      //res.send(Incident);
+      jsonResult = incident;
     }
-    //console.log(resultJSON);
-    res.send(resultJSON);
+    //console.log(jsonResult);
+    res.send(statusCode, jsonResult);
 
     return next();
   });
@@ -74,6 +71,9 @@ IncidentController.prototype.incidentIdGet = function (req, res, next) {
 
 IncidentController.prototype.post = function (req, res, next) {
 
+  var errStr = null;
+  var statusCode = 201;
+  var jsonResult = null;
   var incident = req.body;
   //console.debug(util.inspect(Incident));
   var newIncident = new _IncidentModel(incident);
@@ -81,14 +81,15 @@ IncidentController.prototype.post = function (req, res, next) {
 ///TODO: validate incoming object meets min requirements.
   newIncident.save(function (err, incident) {
     if (err) {
-      res.status(400);
-      res.send({message: "error", error: err.message});
-
+      errStr = err.message;
+      statusCode = 400;
+      jsonResult = {message: "error", error: errStr};
     } else {
-      //_logger.debug("Successfully added incident object for " + Incident._id);
-      res.status(201);
-      res.send(incident);
+      jsonResult = incident;
     }
+
+    res.send(statusCode, jsonResult);
+
     return next();
   });
 };
@@ -123,36 +124,6 @@ IncidentController.prototype.put = function (req, res, next) {
   var condition = {'_id': _id};
   delete _updates._id;
 
-  //_IncidentModel.findOne(condition, function (err, model) {
-  //
-  //  if (err) {
-  //    errStr = err.message;
-  //    statusCode = 409;
-  //    jsonResult = {message: "error", error: errStr};
-  //    res.send(statusCode, jsonResult);
-  //    return next();
-  //
-  //  } else {
-  //    //var snapShot = ;
-  //    //var diff = _IncidentModel.getDiff(model, _updates);
-  //    //console.log(diff);
-  //    //var diff = model.toDiffSnapshot(_updates);
-  //    //_IncidentModel.update(condition, _updates, {runValidators: true}, function (err, rawUpdate) {
-  //    //
-  //    //  if (err) {
-  //    //    errStr = err.message;
-  //    //    statusCode = 409;
-  //    //    jsonResult = {message: "error", error: errStr};
-  //    //  } else {
-  //    //    jsonResult = rawUpdate;
-  //    //  }
-  //    //  res.send(statusCode, jsonResult);
-  //    //
-  //    //  return next();
-  //    //}).then(function(){
-  //    //_IncidentModel.findOneAndUpdate(condition,  {runValidators: true}, function (err, rawUpdate) {
-  //  }
-  //});
   _IncidentModel.findOneAndUpdate(condition, {$set: _updates}, {runValidators: true}, function (err, rawUpdate) {
 
     if (err) {
