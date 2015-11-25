@@ -131,7 +131,6 @@ describe(testDescription, function () {
           loc: helper.getRandomLocations(n)[c.integer({min: 0, max: n + 1})],
           _id: incident._id
         };
-
         request(server)
             .put(PATH)
             .type('application/json')
