@@ -31,16 +31,21 @@ UsersController.prototype.get = function (req, res, next) {
   var errStr = null;
   var statusCode = 200;
   var jsonResult = null;
-
-  _UserModel.find(function (err, users) {
+  var offset = req.params.offset ? req.params.offset : 0;
+  var limit = req.params.limit ? req.params.limit : 2;
+  _UserModel.find(null, null, {skip: offset, limit: limit}, function (err, users) {
 
     if (err) {
       errStr = err.message;
       statusCode = 400;
-      jsonResult = {message: "error", error: errStr};
+      jsonResult = formatErrorResponse(req, errStr);
     }
     else {
-      jsonResult = users;
+      var usersLite = users.map(function (i) {
+        return i.toObject();
+      });
+      //console.log(x);
+      jsonResult = formatResponse(req, usersLite);
     }
     res.send(statusCode, jsonResult);
     return next();
@@ -60,16 +65,16 @@ UsersController.prototype.userIdGet = function (req, res, next) {
     if (err) {
       errStr = err.message;
       statusCode = 400;
-      jsonResult = {message: "error", error: errStr};
+      jsonResult = formatErrorResponse(req, errStr);
     } else if (typeof user === 'undefined' || user === null) {
       errStr = util.format('user with email:%s could not be found.', email);
       statusCode = 400;
-      jsonResult = {message: "error", error: errStr};
-
+      jsonResult = formatErrorResponse(req, errStr);
     } else {
-      jsonResult = user;
+      //jsonResult = user;
+      jsonResult = formatResponse(req, user.toObject());
     }
-    res.send(statusCode, jsonResult);
+    res.send(statusCode, jsonResult.toJSON());
 
     return next();
   });
@@ -89,9 +94,9 @@ UsersController.prototype.post = function (req, res, next) {
     if (err) {
       statusCode = 400;
       errStr = err.message;
-      jsonResult = {message: "error", error: err.message};
+      jsonResult = formatErrorResponse(req, err.message);
     } else {
-      jsonResult = user;
+      jsonResult = formatResponse(req, user.toObject());
     }
     res.send(statusCode, jsonResult);
     return next();
@@ -101,43 +106,22 @@ UsersController.prototype.post = function (req, res, next) {
 UsersController.prototype.delete = function (req, res, next) {
 
   var errStr = null;
-  var statusCode = 200;
+  var statusCode = 204;
   var jsonResult = null;
   var email = req.params.email;
-  _UserModel.findOne({'email': email}, function (err, user) {
+  _UserModel.findOneAndRemove({'email': email}, function (err, user) {
     if (err) {
-      errStr = err.message;
       statusCode = 400;
-      jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-      return next();
-
-    } else if (typeof user === 'undefined' || user === null) {
-
-      errStr = util.format('user with email:%s could not be found.', email);
-      statusCode = 400;
-      jsonResult = {message: "error", error: errStr};
-      res.send(statusCode, jsonResult);
-
-      return next();
-
-    } else {
-      user.remove(function (err, user) {
-        if (err) {
-          errStr = err.message;
-          statusCode = 400;
-          jsonResult = {message: "error", error: errStr};
-        } else {
-          jsonResult = user;
-        }
-        res.send(statusCode, jsonResult);
-
-        return next();
-      });
+      jsonResult = formatErrorResponse(req, err.message);
     }
+    else {
+
+      jsonResult = formatResponse(req, user.toObject());
+    }
+    res.send(statusCode, jsonResult);
+    next();
   });
 };
-
 UsersController.prototype.put = function (req, res, next) {
 
   var errStr = null;
@@ -147,17 +131,18 @@ UsersController.prototype.put = function (req, res, next) {
   var email = updates.email;
   var condition = {'email': email};
   delete updates._id;
-  _UserModel.update(condition/*condition*/, updates/*field updates*/, {
+  _UserModel.update(condition, updates, {
     runValidators: true
   }/*etc*/, function (err, raw) {
 
     if (err) {
       errStr = err.message;
       statusCode = 400;
-      jsonResult = {message: "error", error: errStr};
+      jsonResult = formatErrorResponse(req, errStr);
+
     } else {
-      statusCode = 200;
-      jsonResult = raw;
+      jsonResult = formatResponse(req, raw);
+
     }
     res.send(statusCode, jsonResult);
 
@@ -190,9 +175,11 @@ function formatResponse(req, data) {
     }
     //console.log(req.query);
     next = nextResponse(req, data);
+    jsonResult = new hal.Resource({users: data}, selfUrl);
+  } else {
+    jsonResult = new hal.Resource(data, selfUrl);
   }
 
-  jsonResult = new hal.Resource({users: data}, selfUrl);
 
   if (next)
     jsonResult.link(next);

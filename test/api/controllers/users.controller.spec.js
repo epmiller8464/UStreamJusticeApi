@@ -10,7 +10,7 @@ var config = require('../../../config/environment');
 var controllerName = "users";
 var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version, controllerName);
 //console.log(PATH);
-var count = 1;
+var count = 20;
 var users = helper.getRandomUsers(count);
 assert.equal(count, users.length);
 count.should.eql(users.length);
@@ -71,8 +71,36 @@ describe('GET /users', function () {
           var result = res.body;
           //console.log(result);
           should.notEqual(result, undefined);
-          result.should.be.instanceof(Array);
-          done();
+          result.users.should.be.instanceof(Array);
+          //done();
+          console.log(result._links.next.href);
+          request(server)
+              .get(result._links.next.href)
+              .set('Accept', 'application/json')
+              .end(function (err, res) {
+                assert.equal(res.statusCode, 200);
+                should.not.exist(err);
+                var result = res.body;
+                console.log(result);
+                should.notEqual(result, undefined);
+                result.users.should.be.instanceof(Array);
+                done();
+              });
+          //result.users.forEach(function (u, i, arr) {
+          //
+          //  request(server)
+          //      .get()
+          //      .set('Accept', 'application/json')
+          //      .end(function (err, res) {
+          //        assert.equal(res.statusCode, 200);
+          //        should.not.exist(err);
+          //        var result = res.body;
+          //        //console.log(result);
+          //        should.notEqual(result, undefined);
+          //        result.users.should.be.instanceof(Array);
+          //        done();
+          //      });
+          //});
         });
   });
 
@@ -122,7 +150,6 @@ describe('PUT /users', function () {
   users.forEach(function createUser(user, index, array) {
 
     it('should update an existing user', function (done) {
-      var newImgUrl = user.picture = chance.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']});
 
       request(server)
           .put(PATH)
@@ -144,11 +171,11 @@ describe('DELETE /users', function () {
   //console.log(array[index]);
   users.forEach(function createUser(user, index, array) {
 
-    it('should update an existing user', function (done) {
+    it('should delete an existing user', function (done) {
       request(server)
           .delete(PATH + '/' + user.email)
           .end(function (err, res) {
-            assert.equal(res.statusCode, 200);
+            assert.equal(res.statusCode, 204);
             var result = res.body;
             should.notEqual(result, undefined);
 

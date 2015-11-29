@@ -2,6 +2,7 @@
 var util = require('util');
 var UserController = require('./controllers/users.controller.js');
 var IncidentController = require('./controllers/incidents.controller.js');
+var StreamsController = require('./controllers/streams.controller.js');
 //var stormpath = require('stormpath-sdk-express');
 
 module.exports.addAPIRouter = function (config, app, mongoose) {
@@ -22,9 +23,6 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   //    'http://localhost']
   //};
   //var spMiddleware = stormpath.createMiddleware(spConfig);
-
-  var uc = new UserController(app, mongoose);
-  var ic = new IncidentController(app, mongoose);
 
 
   var PATH = util.format('/%s/%s', config.api.basePATH, config.api.version);
@@ -49,6 +47,7 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
     next();
   });
 
+  var uc = new UserController(app, mongoose);
   var directPath = util.format('%s/%s', PATH, uc.path);
   app.get(directPath, uc.get);
   app.get(directPath + '/:email', uc.userIdGet);
@@ -56,14 +55,21 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   app.put(directPath, uc.put);
   app.del(directPath + '/:email', uc.delete);
 
+  var ic = new IncidentController(app, mongoose);
   directPath = util.format('%s/%s', PATH, ic.path);
-
   app.get(directPath, ic.get);
   app.get(directPath + '/:id', ic.incidentIdGet);
   app.post(directPath, ic.post);
   app.put(directPath, ic.put);
   app.del(directPath + '/:id', ic.delete);
 
+  var sc = new StreamsController(app, mongoose);
+  directPath = util.format('%s/%s', PATH, sc.path);
+  app.get(directPath, sc.get);
+  app.get(directPath + '/:id', sc.incidentIdGet);
+  app.post(directPath, sc.post);
+  app.put(directPath, sc.put);
+  app.del(directPath + '/:id', sc.delete);
 
   //console.log(app.url);
 

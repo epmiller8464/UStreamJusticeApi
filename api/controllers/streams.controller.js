@@ -8,16 +8,16 @@ var inherits = require('inherits');
 var util = require('util');
 var _mongoose = null;
 var _models = null;
-var _IncidentModel = null;
+var _StreamsModel = null;
 var hal = require('../../lib/hal');
 var RootController = require('./index');
 
-function IncidentController(app, mongoose) {
+function StreamsController(app, mongoose) {
   var self = this;
-  IncidentController.super_.call(self);
+  StreamsController.super_.call(self);
   _mongoose = mongoose;
   _models = app.models;//require('../models/models')(mongoose);
-  _IncidentModel = _models.IncidentModel;
+  _StreamsModel = _models.IncidentModel;
   self.path = 'incidents';
   //self.resource = new hal.Resource(self.path,self.path);
   //self.links = new hal.Resource(self.path, app.url);
@@ -25,17 +25,17 @@ function IncidentController(app, mongoose) {
   //return self;
 }
 
-inherits(IncidentController, RootController);
+inherits(StreamsController, RootController);
 
 
-IncidentController.prototype.get = function (req, res, next) {
+StreamsController.prototype.get = function (req, res, next) {
   var errStr = null;
   var statusCode = 200;
   var jsonResult = null;
   var offset = req.params.offset ? req.params.offset : 0;
   var limit = req.params.limit ? req.params.limit : 10;
-  //_IncidentModel.find(function (err, incidents) {
-  _IncidentModel.find(null, null, {skip: offset, limit: limit}, function (err, incidents) {
+  //_StreamsModel.find(function (err, incidents) {
+  _StreamsModel.find(null, null, {skip: offset, limit: limit}, function (err, incidents) {
 
         if (err) {
           statusCode = 400;
@@ -58,7 +58,7 @@ IncidentController.prototype.get = function (req, res, next) {
 
 };
 
-IncidentController.prototype.incidentIdGet = function (req, res, next) {
+StreamsController.prototype.incidentIdGet = function (req, res, next) {
 
   var errStr = null;
   var statusCode = 200;
@@ -66,7 +66,7 @@ IncidentController.prototype.incidentIdGet = function (req, res, next) {
   res.setHeader('Content-Type', 'application/json');
 
   var _id = req.params.id;
-  _IncidentModel.findOne({'_id': _id}, function (err, incident) {
+  _StreamsModel.findOne({'_id': _id}, function (err, incident) {
     if (err) {
       errStr = err.message;
       statusCode = 400;
@@ -88,14 +88,14 @@ IncidentController.prototype.incidentIdGet = function (req, res, next) {
 
 };
 
-IncidentController.prototype.post = function (req, res, next) {
+StreamsController.prototype.post = function (req, res, next) {
 
   var errStr = null;
   var statusCode = 201;
   var jsonResult = null;
   var incident = req.body;
   //console.debug(util.inspect(Incident));
-  var newIncident = new _IncidentModel(incident);
+  var newIncident = new _StreamsModel(incident);
   res.setHeader('Content-Type', 'application/json');
 ///TODO: validate incoming object meets min requirements.
   newIncident.save(function (err, incident) {
@@ -115,14 +115,14 @@ IncidentController.prototype.post = function (req, res, next) {
   });
 };
 
-IncidentController.prototype.delete = function (req, res, next) {
+StreamsController.prototype.delete = function (req, res, next) {
 
   var errStr = null;
   var statusCode = 204;
   var jsonResult = null;
   var _id = req.params.id;
 
-  _IncidentModel.findByIdAndRemove(_id, function (err, incident) {
+  _StreamsModel.findByIdAndRemove(_id, function (err, incident) {
     if (err) {
       statusCode = 400;
       jsonResult = formatErrorResponse(req, err.message);
@@ -136,7 +136,7 @@ IncidentController.prototype.delete = function (req, res, next) {
   });
 };
 
-IncidentController.prototype.put = function (req, res, next) {
+StreamsController.prototype.put = function (req, res, next) {
 
   var errStr = null;
   var statusCode = 200;
@@ -146,7 +146,7 @@ IncidentController.prototype.put = function (req, res, next) {
   var condition = {'_id': _id};
   delete _updates._id;
 
-  _IncidentModel.findOneAndUpdate(condition, {$set: _updates}, {runValidators: true}, function (err, rawUpdate) {
+  _StreamsModel.findOneAndUpdate(condition, {$set: _updates}, {runValidators: true}, function (err, rawUpdate) {
 
     if (err) {
       statusCode = 400;
@@ -208,4 +208,4 @@ function nextResponse(req, data) {
   return next;
 }
 
-module.exports = IncidentController;
+module.exports = StreamsController;
