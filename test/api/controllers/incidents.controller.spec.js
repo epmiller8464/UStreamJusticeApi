@@ -71,7 +71,8 @@ describe(testDescription, function () {
           assert.equal(res.statusCode, 200);
           should.not.exist(err);
           var result = res.body;
-          console.log(util.inspect(result.incidents[0]));
+          console.log(util.inspect(result));
+          //console.log(util.inspect(result.incidents[0]));
           //should.notEqual(result, undefined);
           //result.should.have.property('_links');
           //result.should.be.instanceof(Array);

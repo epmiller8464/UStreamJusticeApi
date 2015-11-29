@@ -1,24 +1,30 @@
 'use strict';
 
 var _ = require('lodash');
-var util = require('util');
 var validator = require('validator');
+var _stormpath = null;
+var _logger = null;
+var inherits = require('inherits');
+var util = require('util');
 var _mongoose = null;
 var _models = null;
 var _UserModel = null;
-var _stormpath = null;
-var _logger = null;
+var hal = require('../../lib/hal');
+var RootController = require('./index');
 
 module.exports = UsersController;
 
 function UsersController(app, mongoose) {
   var self = this;
+  UsersController.super_.call(self);
+
   _mongoose = mongoose;
   _models = app.models;//require('../models/models')(mongoose);
   _UserModel = _models.UserModel;
   //_logger = app.get('readerLogger');
   self.path = 'users';
 }
+inherits(UsersController, RootController);
 
 UsersController.prototype.get = function (req, res, next) {
 
@@ -159,5 +165,51 @@ UsersController.prototype.put = function (req, res, next) {
 
   });
 };
+
+function noop(error, result) {
+  if (error) console.trace(error);
+
+  return result;
+}
+function formatErrorResponse(req, err) {
+  var _selfUrl = req.href();
+  var jsonResult = new hal.Resource({message: "error", error: err}, _selfUrl);
+  return jsonResult;
+}
+
+function formatResponse(req, data) {
+
+  var selfUrl = req.href();
+  var jsonResult, next;
+
+  if (util.isArray(data)) {
+    for (var i = 0; i < data.length; i++) {
+      var resource = data[i];
+      //data[i] = new hal.Resource(resource.toObject(), req.path() + '/' + resource._id);
+      data[i] = new hal.Resource(resource, req.path() + '/' + resource._id);
+    }
+    //console.log(req.query);
+    next = nextResponse(req, data);
+  }
+
+  jsonResult = new hal.Resource({users: data}, selfUrl);
+
+  if (next)
+    jsonResult.link(next);
+
+  return jsonResult;
+}
+
+function nextResponse(req, data) {
+
+  var offset = req.params.offset ? req.params.offset : 0;
+  var limit = req.params.limit ? req.params.limit : 10;
+  var _limit = util.format('?limit=%s', limit);
+  var _offset = util.format('&offset=%s', offset += data.length);
+  var _query = util.format('%s%s', _limit, _offset);
+  var _nextUrl = util.format('%s%s', req.path(), _query);
+  var next = new hal.Link('next', {href: _nextUrl});
+  return next;
+}
 
 module.exports = UsersController;

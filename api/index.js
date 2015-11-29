@@ -30,6 +30,7 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   var PATH = util.format('/%s/%s', config.api.basePATH, config.api.version);
   app.use(function (req, res, next) {
     //res.contentType('application/json');
+    //console.log('use xxx')
     next();
   });
 
