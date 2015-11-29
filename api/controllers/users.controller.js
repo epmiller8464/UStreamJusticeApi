@@ -31,8 +31,8 @@ UsersController.prototype.get = function (req, res, next) {
   var errStr = null;
   var statusCode = 200;
   var jsonResult = null;
-  var offset = req.params.offset ? req.params.offset : 0;
-  var limit = req.params.limit ? req.params.limit : 2;
+  var offset = req.params.offset ? parseInt(req.params.offset) : 0;
+  var limit = req.params.limit ? parseInt(req.params.limit) : 10;
   _UserModel.find(null, null, {skip: offset, limit: limit}, function (err, users) {
 
     if (err) {
@@ -189,8 +189,8 @@ function formatResponse(req, data) {
 
 function nextResponse(req, data) {
 
-  var offset = req.params.offset ? req.params.offset : 0;
-  var limit = req.params.limit ? req.params.limit : 10;
+  var offset = req.params.offset ? parseInt(req.params.offset) : 0;
+  var limit = req.params.limit ? parseInt(req.params.limit) : 10;
   var _limit = util.format('?limit=%s', limit);
   var _offset = util.format('&offset=%s', offset += data.length);
   var _query = util.format('%s%s', _limit, _offset);

@@ -6,21 +6,22 @@ module.exports = function (mongoose) {
   var Model;
 //TODO: add validation pre save
 
-  var mediaBundleSchema = new mongoose.Schema({
+  var streamSchema = new mongoose.Schema({
+
     liveStreamUrl: {type: String},
     recordedVideoUrl: {type: String},
     incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident'}
-  }, {collection: 'mediaBundle'});
+  }, {collection: 'stream'});
 
-  mediaBundleSchema.index({liveStreamUrl: 1}, {unique: true});
-  mediaBundleSchema.index({recordedVideoUrl: 1}, {unique: true});
-  mediaBundleSchema.index({incidentId: 1}, {unique: true});
+  streamSchema.index({liveStreamUrl: 1}, {unique: true});
+  streamSchema.index({recordedVideoUrl: 1}, {unique: true});
+  streamSchema.index({incidentId: 1}, {unique: true});
 
   try {
     // Throws an error if "Name" hasn't been registered
-    Model = mongoose.model("mediaBundle");
+    Model = mongoose.model("stream");
   } catch (e) {
-    Model = mongoose.model('mediaBundle', mediaBundleSchema);
+    Model = mongoose.model('stream', streamSchema);
   }
   return Model;
 };

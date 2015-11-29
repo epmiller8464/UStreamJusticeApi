@@ -55,9 +55,11 @@ var TestDataHelper = {
     var incidents = [];
     var targets = TestDataHelper.getRandomUsers(count);
     var locations = TestDataHelper.getRandomLocations(count);
+    var streams = TestDataHelper.getRandonMediaBundles(count);
     for (var i = 0; i < count; i++) {
       var t = targets[i];
       var l = locations[i];
+      var s = streams[i];
       //console.log('loc: %s', l);
       //console.log('user: %s', t);
       incidents.push(new Incident({
@@ -70,7 +72,8 @@ var TestDataHelper = {
         lastModified: Date.now(),
         sourceType: 'VICTIM',
         tags: ['Racial Profiling', 'Black Male', 'Police', 'Dont Shoot'],
-        description: c.paragraph()
+        description: c.paragraph(),
+
       }));
     }
     return incidents;

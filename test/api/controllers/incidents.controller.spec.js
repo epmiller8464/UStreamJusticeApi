@@ -37,24 +37,24 @@ describe(testDescription, function () {
           });
     });
 
-    it('should return statusCode === 400; an error inserting duplicate incidents', function (done) {
-      //console.log(incident);
-
-      request(server)
-          .post(PATH)
-          .type('application/json')
-          .send(incident)
-          .end(function (err, res) {
-            assert.equal(res.statusCode, 400);
-            //console.log(err);
-            var result = res.body;
-            should.notEqual(result, undefined);
-            result.should.have.property('error');
-            //console.log(result);
-
-            done();
-          });
-    });
+    //it('should return statusCode === 400; an error inserting duplicate incidents', function (done) {
+    //  //console.log(incident);
+    //
+    //  request(server)
+    //      .post(PATH)
+    //      .type('application/json')
+    //      .send(incident)
+    //      .end(function (err, res) {
+    //        assert.equal(res.statusCode, 400);
+    //        //console.log(err);
+    //        var result = res.body;
+    //        should.notEqual(result, undefined);
+    //        result.should.have.property('error');
+    //        //console.log(result);
+    //
+    //        done();
+    //      });
+    //});
   });
 });
 

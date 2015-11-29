@@ -158,7 +158,7 @@ describe('Mongoose.Incident', function () {
       });
     });
 
-    var n = c.integer({min: 20000, max: 50000});
+    var n = c.integer({min: 0, max: 100});
     do {
       //console.log(n);
       it('update an existing incident', function (done) {
