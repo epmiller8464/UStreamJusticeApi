@@ -9,6 +9,6 @@ module.exports = function (mongoose) {
   models.IncidentModel = require('./incident.model')(mongoose);
   models.IncidentStates = require('./enums.model').IncidentStates;
   models.SourceTypes = require('./enums.model').SourceTypes;
-  models.MediaBundleModel = require('./mediaBundle.model')(mongoose);
+  models.StreamModel = require('./stream.model.js')(mongoose);
   return models;
 };

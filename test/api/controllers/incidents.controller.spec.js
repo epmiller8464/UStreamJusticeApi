@@ -33,7 +33,23 @@ describe(testDescription, function () {
             //result.should.have.property('_id');
             //console.log(result);
             //result.email.should.eql(incident.email);
-            done();
+            //done();
+            var p2 = util.format('/%s/%s/%s', config.api.basePATH, config.api.version,'streams');
+            request(server)
+                .post(p2)
+                .type('application/json')
+                .send({incidentId: incident._id})
+                .end(function (err, res) {
+                  assert.equal(res.statusCode, 201);
+                  var result = res.body;
+                  should.notEqual(result, undefined);
+                  //result.should.have.property('_links');
+                  //result.should.have.property('data');
+                  //result.should.have.property('_id');
+                  console.log(result);
+                  //result.email.should.eql(incident.email);
+                  done();
+                });
           });
     });
 

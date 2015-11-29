@@ -38,7 +38,7 @@ module.exports = function (mongoose) {
         tags: {type: [String], index: true}, // field level
         description: {type: String, trim: true},
         //incidentHistory: {type: []},
-        streamId: {type: mongoose.Schema.Types.ObjectId, ref: 'Stream'},
+        streamId: {type: mongoose.Schema.Types.ObjectId, ref: 'stream'},
         //snapshots: [IncidentSnapshotModel.schema]
         snapshots: {type: [mongoose.Schema.Types.ObjectId], ref: 'incidentSnapshot'}
       },

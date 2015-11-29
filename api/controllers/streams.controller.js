@@ -17,8 +17,8 @@ function StreamsController(app, mongoose) {
   StreamsController.super_.call(self);
   _mongoose = mongoose;
   _models = app.models;//require('../models/models')(mongoose);
-  _StreamsModel = _models.IncidentModel;
-  self.path = 'incidents';
+  _StreamsModel = _models.StreamModel;
+  self.path = 'streams';
   //self.resource = new hal.Resource(self.path,self.path);
   //self.links = new hal.Resource(self.path, app.url);
   //console.log(self.links.self);
@@ -35,19 +35,19 @@ StreamsController.prototype.get = function (req, res, next) {
   var offset = req.params.offset ? parseInt(req.params.offset) : 0;
   var limit = req.params.limit ? parseInt(req.params.limit) : 10;
   //_StreamsModel.find(function (err, incidents) {
-  _StreamsModel.find(null, null, {skip: offset, limit: limit}, function (err, incidents) {
+  _StreamsModel.find(null, null, {skip: offset, limit: limit}, function (err, streams) {
 
         if (err) {
           statusCode = 400;
           jsonResult = formatErrorResponse(req, err.message);
         }
         else {
-          //console.log(incidents);
-          var incidentsLite = incidents.map(function (i) {
+          //console.log(streams);
+          var streamsLite = streams.map(function (i) {
             return i.toObject();
           });
           //console.log(x);
-          jsonResult = formatResponse(req, incidentsLite);
+          jsonResult = formatResponse(req, streamsLite);
         }
 
         res.send(statusCode, jsonResult);
@@ -65,19 +65,19 @@ StreamsController.prototype.incidentIdGet = function (req, res, next) {
   var jsonResult = null;
   res.setHeader('Content-Type', 'application/json');
 
-  var _id = req.params.id;
-  _StreamsModel.findOne({'_id': _id}, function (err, incident) {
+  var incidentId = req.params.incidentId;
+  _StreamsModel.findOne({'incidentId': incidentId}, function (err, stream) {
     if (err) {
       errStr = err.message;
       statusCode = 400;
       jsonResult = formatErrorResponse(req, errStr);
-    } else if (typeof incident === 'undefined' || incident === null) {
-      errStr = util.format('Incident with _id:%s could not be found.', _id);
+    } else if (typeof stream === 'undefined' || stream === null) {
+      errStr = util.format('Incident with _id:%s could not be found.', incidentId);
       statusCode = 400;
       jsonResult = formatErrorResponse(req, errStr);
     } else {
-      //jsonResult = incident;
-      jsonResult = formatResponse(req, incident.toObject());
+      //jsonResult = stream;
+      jsonResult = formatResponse(req, stream.toObject());
 
     }
     //console.log(jsonResult);
@@ -93,19 +93,23 @@ StreamsController.prototype.post = function (req, res, next) {
   var errStr = null;
   var statusCode = 201;
   var jsonResult = null;
-  var incident = req.body;
+  var incidentId = req.body.incidentId;
   //console.debug(util.inspect(Incident));
-  var newIncident = new _StreamsModel(incident);
+  var newStream = new _StreamsModel({
+    liveStreamUrl: util.format('%s/%s', req.href(), incidentId),
+    recordedVideoUrl: util.format('%s/%s', req.href(), incidentId),
+    incidentId: incidentId
+  });
   res.setHeader('Content-Type', 'application/json');
-///TODO: validate incoming object meets min requirements.
-  newIncident.save(function (err, incident) {
+///TODO: create stream data here.
+  newStream.save(function (err, stream) {
     if (err) {
       statusCode = 400;
       jsonResult = formatErrorResponse(req, err.message);
     }
     else {
 
-      jsonResult = formatResponse(req, incident.toObject());
+      jsonResult = formatResponse(req, stream.toObject());
     }
 
 
@@ -186,9 +190,10 @@ function formatResponse(req, data) {
     }
     //console.log(req.query);
     next = nextResponse(req, data);
+    jsonResult = new hal.Resource({streams: data}, selfUrl);
+  } else {
+    jsonResult = new hal.Resource(data, selfUrl);
   }
-
-  jsonResult = new hal.Resource({incidents: data}, selfUrl);
 
   if (next)
     jsonResult.link(next);

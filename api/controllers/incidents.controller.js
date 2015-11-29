@@ -186,9 +186,10 @@ function formatResponse(req, data) {
     }
     //console.log(req.query);
     next = nextResponse(req, data);
+    jsonResult = new hal.Resource({incidents: data}, selfUrl);
+  } else {
+    jsonResult = new hal.Resource(data, selfUrl);
   }
-
-  jsonResult = new hal.Resource({incidents: data}, selfUrl);
 
   if (next)
     jsonResult.link(next);

@@ -180,7 +180,6 @@ function formatResponse(req, data) {
     jsonResult = new hal.Resource(data, selfUrl);
   }
 
-
   if (next)
     jsonResult.link(next);
 

@@ -66,10 +66,10 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   var sc = new StreamsController(app, mongoose);
   directPath = util.format('%s/%s', PATH, sc.path);
   app.get(directPath, sc.get);
-  app.get(directPath + '/:id', sc.incidentIdGet);
+  app.get(directPath + '/:incidentId', sc.incidentIdGet);
   app.post(directPath, sc.post);
   app.put(directPath, sc.put);
-  app.del(directPath + '/:id', sc.delete);
+  app.del(directPath + '/:incidentId', sc.delete);
 
   //console.log(app.url);
 

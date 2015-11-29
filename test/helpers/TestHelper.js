@@ -7,7 +7,7 @@ var models = require('../../app').models;
 var IncidentLocation = models.IncidentLocationModel;
 var User = models.UserModel;
 var Incident = models.IncidentModel;
-var MediaBundle = models.MediaBundleModel;
+var StreamModel = models.StreamModel;
 
 var TestDataHelper = {
 
@@ -55,14 +55,15 @@ var TestDataHelper = {
     var incidents = [];
     var targets = TestDataHelper.getRandomUsers(count);
     var locations = TestDataHelper.getRandomLocations(count);
-    var streams = TestDataHelper.getRandonMediaBundles(count);
+    //var streams = TestDataHelper.getRandonMediaBundles(count);
     for (var i = 0; i < count; i++) {
       var t = targets[i];
       var l = locations[i];
-      var s = streams[i];
+      //var s = streams[i];
+
       //console.log('loc: %s', l);
       //console.log('user: %s', t);
-      incidents.push(new Incident({
+      var incident = new Incident({
         loc: l._id,
         sourceIdentity: t._id,
         incidentTarget: t._id,
@@ -73,20 +74,38 @@ var TestDataHelper = {
         sourceType: 'VICTIM',
         tags: ['Racial Profiling', 'Black Male', 'Police', 'Dont Shoot'],
         description: c.paragraph(),
-
-      }));
+      });
+      var stream = new StreamModel({
+        liveStreamUrl: c.url({
+          domain: 'https://www.api.ustreamjustice.com',
+          path: util.format('v1/streams/live/%s', incident._id)
+        }),
+        recordedVideoUrl: c.url({
+          domain: 'https://www.api.ustreamjustice.com',
+          path: util.format('v1/streams/recorded/%s', incident._id)
+        }),
+        incidentId: incident._id
+      });
+      incident.streamId = stream._id;
+      incidents.push(incident);
     }
     return incidents;
   },
   getRandonMediaBundles: function (incidents) {
     "use strict";
     var bundles = [],
-    count = incidents.length;
+        count = incidents.length;
     for (var i = 0; i < count; i++) {
       var incident = incidents[i];
-      bundles.push(new MediaBundle({
-        liveStreamUrl: c.url({domain: 'https://www.api.ustreamjustice.com', path: util.format('v1/streams/live/%s',incident._id)}),
-        recordedVideoUrl: c.url({domain: 'https://www.api.ustreamjustice.com', path: util.format('v1/streams/recorded/%s',incident._id)}),
+      bundles.push(new StreamModel({
+        liveStreamUrl: c.url({
+          domain: 'https://www.api.ustreamjustice.com',
+          path: util.format('v1/streams/live/%s', incident._id)
+        }),
+        recordedVideoUrl: c.url({
+          domain: 'https://www.api.ustreamjustice.com',
+          path: util.format('v1/streams/recorded/%s', incident._id)
+        }),
         incidentId: incident._id
       }));
     }

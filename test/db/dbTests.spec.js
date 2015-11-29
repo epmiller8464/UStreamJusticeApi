@@ -228,7 +228,7 @@ describe('Mongoose.Incident', function () {
 });
 //
 //var mediaBundles = helper.getRandonMediaBundles(incidents);
-//describe('Mongoose.MediaBundle', function () {
+//describe('Mongoose.StreamModel', function () {
 //  "use strict";
 //  it('Add new mediaBundle', function () {
 //
