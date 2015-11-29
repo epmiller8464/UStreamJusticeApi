@@ -26,12 +26,28 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   var uc = new UserController(app, mongoose);
   var ic = new IncidentController(app, mongoose);
 
+
+  var PATH = util.format('/%s/%s', config.api.basePATH, config.api.version);
   app.use(function (req, res, next) {
     //res.contentType('application/json');
     next();
   });
 
-  var PATH = util.format('/%s/%s', config.api.basePATH, config.api.version);
+  app.get(PATH, function (req, res, next) {
+    //res.contentType('application/json');
+    var gets = app.router.routes.GET;
+    var json = {};
+    //console.log(app.router.routes.GET);
+    gets.forEach(function (r, i, arr) {
+      //console.log(req.href());
+      console.log(r);
+      json[r.spec.path] = app.url + r.spec.path;
+    });
+
+    res.json({_links: json});
+    next();
+  });
+
   var directPath = util.format('%s/%s', PATH, uc.path);
   app.get(directPath, uc.get);
   app.get(directPath + '/:email', uc.userIdGet);
@@ -46,5 +62,9 @@ module.exports.addAPIRouter = function (config, app, mongoose) {
   app.post(directPath, ic.post);
   app.put(directPath, ic.put);
   app.del(directPath + '/:id', ic.delete);
+
+
+  //console.log(app.url);
+
   //app.use('/api/v1.0', router);
 };

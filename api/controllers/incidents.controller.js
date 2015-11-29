@@ -17,6 +17,8 @@ function IncidentController(app, mongoose) {
   _IncidentModel = _models.IncidentModel;
   self.path = 'incidents';
   //self.resource = new hal.Resource(self.path,self.path);
+  //self.links = new hal.Resource(self.path, app.url);
+  //console.log(self.links.self);
 }
 
 function formatErrorResponse(req, err) {

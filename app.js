@@ -27,7 +27,7 @@ app.models = {};
 require('./routes')(config, app, mongoose);
 
 // Start server
-app.listen(config.port, config.ip, function () {
+app.listen(config.port, config.ip ? config.ip : config.host, function () {
   //console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
 });
 

@@ -4,7 +4,7 @@ var path = require('path');
 var _ = require('lodash');
 
 function requiredProcessEnv(name) {
-  if(!process.env[name]) {
+  if (!process.env[name]) {
     throw new Error('You must set the ' + name + ' environment variable');
   }
   return process.env[name];
@@ -20,7 +20,7 @@ var all = {
 
   // Server port
   port: process.env.PORT || 9000,
-
+  host: 'localhost',
   // Should we populate the DB with sample data?
   seedDB: false,
 
@@ -46,5 +46,5 @@ var all = {
 // Export the config object based on the NODE_ENV
 // ==============================================
 module.exports = _.merge(
-  all,
-  require('./' + process.env.NODE_ENV + '.js') || {});
+    all,
+    require('./' + process.env.NODE_ENV + '.js') || {});
