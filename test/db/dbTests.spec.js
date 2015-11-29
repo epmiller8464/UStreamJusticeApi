@@ -10,6 +10,7 @@ var util = require('util');
 var app = require('../../app');
 var models = app.models;
 var helper = require('../helpers/TestHelper');
+var hal = require('../../lib/hal');
 var count = 1;
 var users = helper.getRandomUsers(count);
 
@@ -101,6 +102,22 @@ describe('Mongoose.User', function () {
   });
 });
 
+function formatResponse(req, data) {
+
+  var offset = req.params.offset ? req.params.offset : 0;
+  var limit = req.params.limit;
+  var _selfUrl = req.href();
+  var jsonResult = new hal.Resource(data, _selfUrl);
+  if (util.isArray(data)) {
+    console.log(req.query);
+
+    var _nextUrl = util.format('%s?limit=%s&offset=%s', req.path(), limit, offset += data.length);
+    jsonResult.link(new hal.Link('next', {href: _nextUrl}));
+  }
+
+  return jsonResult;
+}
+
 var locs = helper.getRandomLocations(count);
 
 describe('Mongoose.IncidentLocation', function () {
@@ -111,6 +128,8 @@ describe('Mongoose.IncidentLocation', function () {
         should.not.exist(err);
         assert.notEqual(location, undefined);
         assert.notEqual(location, null);
+
+
       });
     });
   });
@@ -139,7 +158,7 @@ describe('Mongoose.Incident', function () {
       });
     });
 
-    var n = c.integer({min: 0, max: 100});
+    var n = c.integer({min: 20000, max: 50000});
     do {
       //console.log(n);
       it('update an existing incident', function (done) {
