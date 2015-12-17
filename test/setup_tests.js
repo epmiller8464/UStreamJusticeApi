@@ -2,7 +2,7 @@
  * Created by ghostmac on 11/10/15.
  */
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.NODE_ENV = process.env.NODE_ENV || 'test';
 TU_EMAIL_REGEX = 'testuser*';
 SP_APP_NAME = 'Reader Test';
 

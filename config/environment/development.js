@@ -21,6 +21,7 @@ module.exports = {
     apiServerPort: '9000',
     apiServerURI: 'http://localhost:9000/api/v1'
   },
+  ip: '192.168.0.6',
   api: {
     basePATH: 'api',
     version: 'v1'

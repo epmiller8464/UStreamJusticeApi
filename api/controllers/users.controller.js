@@ -117,8 +117,8 @@ UsersController.prototype.delete = function (req, res, next) {
   var errStr = null;
   var statusCode = 204;
   var jsonResult = null;
-  var email = req.params.email;
-  _UserModel.findOneAndRemove({'email': email.lowercase}, function (err, user) {
+  var email = req.params.email.toLowerCase();
+  _UserModel.findOneAndRemove({'email': email}, function (err, user) {
     if (err) {
       statusCode = 400;
       jsonResult = formatErrorResponse(req, err.message);
