@@ -10,7 +10,7 @@ var config = require('../../../config/environment');
 var controllerName = "users";
 var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version, controllerName);
 //console.log(PATH);
-var count = 20;
+var count = 1;
 var users = helper.getRandomUsers(count);
 assert.equal(count, users.length);
 count.should.eql(users.length);
@@ -167,20 +167,20 @@ describe('PUT /users', function () {
   });
 });
 
-describe('DELETE /users', function () {
-  //console.log(array[index]);
-  users.forEach(function createUser(user, index, array) {
-
-    it('should delete an existing user', function (done) {
-      request(server)
-          .delete(PATH + '/' + user.email)
-          .end(function (err, res) {
-            assert.equal(res.statusCode, 204);
-            var result = res.body;
-            should.notEqual(result, undefined);
-
-            done();
-          });
-    });
-  });
-});
+//describe('DELETE /users', function () {
+//  //console.log(array[index]);
+//  users.forEach(function createUser(user, index, array) {
+//
+//    it('should delete an existing user', function (done) {
+//      request(server)
+//          .delete(PATH + '/' + user.email)
+//          .end(function (err, res) {
+//            assert.equal(res.statusCode, 204);
+//            var result = res.body;
+//            should.notEqual(result, undefined);
+//
+//            done();
+//          });
+//    });
+//  });
+//});

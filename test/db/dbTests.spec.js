@@ -35,6 +35,7 @@ describe('Mongoose.User', function () {
 
   it('update user bad email', function (done) {
     //[1,2,3].should.containEql(4);
+    var n = models.UserModel();
     var user = users[0];
     //users.forEach(function (user, index, array) {
     var condition = {'_id': user._id};

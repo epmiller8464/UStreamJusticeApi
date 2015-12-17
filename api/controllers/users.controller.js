@@ -60,7 +60,7 @@ UsersController.prototype.userIdGet = function (req, res, next) {
   var jsonResult = null;
   res.setHeader('Content-Type', 'application/json');
 
-  var email = req.params.email;
+  var email = req.params.email.toLowerCase();
   _UserModel.findOne({'email': email}, function (err, user) {
     if (err) {
       errStr = err.message;
@@ -85,6 +85,9 @@ UsersController.prototype.post = function (req, res, next) {
 
   var updates = req.body;
   var userUpdates = new _UserModel(updates);
+  if(!userUpdates.createDate){
+    userUpdates.createDate = Date.now();
+  }
   var errStr = null;
   var statusCode = 201;
   var jsonResult = null;
@@ -94,7 +97,13 @@ UsersController.prototype.post = function (req, res, next) {
     if (err) {
       statusCode = 400;
       errStr = err.message;
-      jsonResult = formatErrorResponse(req, err.message);
+      //var errors = JSON.stringify(err.errors);
+      for(var error in err.errors){
+        if(err.errors[error].message){
+          errStr +=  util.format('%s',err.errors[error].message);
+        }
+      }
+      jsonResult = formatErrorResponse(req, errStr);
     } else {
       jsonResult = formatResponse(req, user.toObject());
     }
@@ -109,7 +118,7 @@ UsersController.prototype.delete = function (req, res, next) {
   var statusCode = 204;
   var jsonResult = null;
   var email = req.params.email;
-  _UserModel.findOneAndRemove({'email': email}, function (err, user) {
+  _UserModel.findOneAndRemove({'email': email.lowercase}, function (err, user) {
     if (err) {
       statusCode = 400;
       jsonResult = formatErrorResponse(req, err.message);
@@ -128,7 +137,7 @@ UsersController.prototype.put = function (req, res, next) {
   var statusCode = 200;
   var jsonResult = null;
   var updates = req.body;
-  var email = updates.email;
+  var email = updates.email.toLowerCase();
   var condition = {'email': email};
   delete updates._id;
   _UserModel.update(condition, updates, {

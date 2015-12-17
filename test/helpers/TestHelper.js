@@ -15,20 +15,21 @@ var TestDataHelper = {
     "use strict";
     var users = [];
     for (var i = 0; i < count; i++) {
-
+var email = c.email();
       users.push(new User({
         active: true,
         verified: false,
-        email: c.email(),
+        email: email,
         //email: c.last(),
         firstName: c.first(),
         lastName: c.last(),
-        gender: c.gender().toString()[0],
+        age: c.age().toString(),
+        username:email,
         phone: c.phone(),
         sp_api_key_id: c.hash(),
         sp_api_key_secret: c.hash(),
         lastLogin: Date.now(),
-        created: Date(),
+        createDate: Date.now(),
         picture: c.url({domain: 'https://www.cdn.ustreamjustice.com', extensions: ['jpeg']})
       }));
     }
