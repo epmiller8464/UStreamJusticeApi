@@ -11,7 +11,7 @@ var controllerName = "incidents";
 var PATH = util.format('/%s/%s/%s', config.api.basePATH, config.api.version, controllerName);
 //console.log(PATH);
 
-var count = 3;
+var count = 5000;
 var data = helper.getRandomIncidents(count);
 count.should.eql(data.length);
 

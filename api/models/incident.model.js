@@ -4,6 +4,7 @@ var enums = require('./enums.model');
 module.exports = function (mongoose) {
   'use strict';
   var IncidentSnapshotModel = require('./incidentSnapshot.model')(mongoose);
+  var IncidentLocationModel = require('./incidentLocation.model')(mongoose);
   var Model;
   /*
    *@TODO: add validation pre save
@@ -16,14 +17,20 @@ module.exports = function (mongoose) {
           enum: Object.keys(enums.IncidentStates),
           default: enums.IncidentStates.NEW
         },
-        loc: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
-        //locations: {type: [{lat: Number, long: Number}]},
+        initialLoc: {
+          type: {type: String, required: true, default: 'Point'},
+          coordinates: [Number]
+        },
+        locations:{
+          type: {type: String, required: true, default: 'MultiPoint'},
+          coordinates: []
+        },
         categoryType: {type: String, trim: true, uppercase: true},
-        incidentDate: {type: Date, default: Date.now},
+        //incidentDate: {type: Date, default: Date.now},
         /*
          * @precise time in milliseconds
          * */
-        hammertime: {type: Number, required: true, default: Date.now()},
+        incidentDate: {type: Number, required: true, default: Date.now()},
         endHammertime: {type: Number},
         lastModified: {type: Number, required: true, default: Date.now()},
         sourceIdentity: {type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
@@ -36,7 +43,7 @@ module.exports = function (mongoose) {
         },
         incidentTarget: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         tags: {type: [String], index: true}, // field level
-        description: {type: String, trim: true},
+        details: {type: String, trim: true},
         //incidentHistory: {type: []},
         streamId: {type: mongoose.Schema.Types.ObjectId, ref: 'stream'},
         //snapshots: [IncidentSnapshotModel.schema]
@@ -48,10 +55,29 @@ module.exports = function (mongoose) {
   incidentSchema.index({state: 1});
   incidentSchema.index({categoryType: 'text'});
   incidentSchema.index({tags: 'text'});
-  incidentSchema.index({description: 'text'});
+  incidentSchema.index({details: 'text'});
   incidentSchema.index({sourceIdentity: 1}, {sparse: true});
   incidentSchema.index({incidentTarget: 1}, {sparse: true});
-
+  incidentSchema.index({initialLoc: '2dsphere'});
+  incidentSchema.index({locations: '2dsphere'});
+  //incidentSchema.virtual('incidentLocation')
+  //    .get(function () {
+  //  return this.__incidentLocation;
+  //}).set(function (loc) {
+  //  this.__incidentLocation = loc;
+  //});
+  //function setInitialLocation(val) {
+  //  var _initialLoc = val;
+  //  if (val) {
+  //    if (val.loc) {
+  //      //var location = new IncidentLocationModel(val);
+  //      _initialLoc = new IncidentLocationModel(val);
+  //      _initialLoc.incidentId = this._id;
+  //      this.incidentLocation = _initialLoc;
+  //    }
+  //  }
+  //  return _initialLoc;
+  //}
 
   incidentSchema.static('getDiff', function (original, modified) {
     var _ogRaw = original instanceof mongoose.Model ?
@@ -124,26 +150,25 @@ module.exports = function (mongoose) {
 
   incidentSchema.pre('save', function (next) {
 
-
     var raw = this.toObject();
     //Object.defineProperty(raw, 'incidentId', {value: raw._id.toString(), enumerable: true});
     var snapshot = new IncidentSnapshotModel(raw);
     this.snapshots.push(snapshot._id);
-    //var s = snapshot.save(function (err, saved) {
-    //  console.log('post -> post: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
-    //  console.log(saved);
-    //  Model.findOne({_id: saved.incidentId}).populate('snapshots').exec(function (err, incid) {
+    //if (this.incidentLocation) {
+    //  if (this.incidentLocation.loc) {
+    //    var location = this.incidentLocation;// new IncidentLocationModel(this.initialLoc);
+    //    //this.initialLoc.incidentId = this._id;
+    //    location.save(function (err, loc) {
     //
-    //    console.log(err);
-    //    console.log(incid);
-    //  });
-    //doc.save(function (err, d) {
-    //  console.log(err);
-    //  console.log(d);
-    //});
-    //});
-    //console.log(this.snapshots);
-    //console.log(this);
+    //      if (err) {
+    //        throw new Error(err.message);
+    //      }
+    //      console.log('SUCCESS: saved incident location.');
+    //      console.log('initialLoc: %s', u.inspect(loc.toObject()));
+    //    });
+    //  }
+    //}
+
     next();
   });
   incidentSchema.post('save', function (doc) {
@@ -152,20 +177,27 @@ module.exports = function (mongoose) {
     var snapshot = new IncidentSnapshotModel(raw);
     //snapshot.incidentId = doc._id;
     //var s = snapshot.save();
+
     snapshot.save(function (err, saved) {
       console.log('post -> post: incident snapshot capture %s\n', err ? 'FAILED' : 'SUCCEEDED');
-      //console.log(saved);
-      //Model.findOne({_id: saved.incidentId}).populate('snapshots').exec(function (err, incid) {
-      //
-      //  console.log(err);
-      //  console.log(incid);
-      //});
-      //doc.$set({snapshots: doc.snapshots.push(saved._id)});
-      //doc.save(function (err, d) {
-      //  console.log(err);
-      //  console.log(d);
-      //});
+
     });
+
+    //if (this.incidentLocation) {
+    //  if (this.incidentLocation.loc) {
+    //    var location = this.incidentLocation;// new IncidentLocationModel(this.initialLoc);
+    //    //this.initialLoc.incidentId = this._id;
+    //    location.save(function (err, loc) {
+    //
+    //      if (err) {
+    //        throw new Error(err.message);
+    //      }
+    //      console.log('SUCCESS: saved incident location.');
+    //      console.log('initialLoc: %s', u.inspect(loc.toObject()));
+    //    });
+    //  }
+    //}
+
   });
 
   incidentSchema.post('findOneAndUpdate', function (doc) {
@@ -184,7 +216,7 @@ module.exports = function (mongoose) {
       }).then(function () {
         doc.snapshots.push(snapshot._id);
         Model.update({_id: doc._id}, {$set: {snapshots: doc.snapshots}}, {
-        //Model.update({_id: doc._id}, {$set: {snapshots: [snapshot._id]}}, {
+          //Model.update({_id: doc._id}, {$set: {snapshots: [snapshot._id]}}, {
           //overwrite: true,
           runValidators: false
         }, function (err, d) {

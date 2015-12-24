@@ -11,7 +11,7 @@ var app = require('../../app');
 var models = app.models;
 var helper = require('../helpers/TestHelper');
 var hal = require('../../lib/hal');
-var count = 1;
+var count = 100;
 var users = helper.getRandomUsers(count);
 
 
@@ -120,21 +120,21 @@ function formatResponse(req, data) {
 }
 
 var locs = helper.getRandomLocations(count);
-
-describe('Mongoose.IncidentLocation', function () {
-  "use strict";
-  locs.forEach(function (loc, index, array) {
-    it('Add new incidentLocation', function () {
-      loc.save(function (err, location) {
-        should.not.exist(err);
-        assert.notEqual(location, undefined);
-        assert.notEqual(location, null);
-
-
-      });
-    });
-  });
-});
+//
+//describe('Mongoose.IncidentLocation', function () {
+//  "use strict";
+//  locs.forEach(function (loc, index, array) {
+//    it('Add new incidentLocation', function () {
+//      loc.save(function (err, location) {
+//        should.not.exist(err);
+//        assert.notEqual(location, undefined);
+//        assert.notEqual(location, null);
+//
+//
+//      });
+//    });
+//  });
+//});
 //
 var incidents = helper.getRandomIncidents(count);
 describe('Mongoose.Incident', function () {
@@ -159,7 +159,7 @@ describe('Mongoose.Incident', function () {
       });
     });
 
-    var n = c.integer({min: 0, max: 100});
+    var n = c.integer({min: 0, max: 10});
     do {
       //console.log(n);
       it('update an existing incident', function (done) {
@@ -169,7 +169,7 @@ describe('Mongoose.Incident', function () {
         //sn = incident.toSnapshot(undefined);
         //sn = incident.toSnapshot();
         var badUpdates = {
-          description: 'test update',
+          details: 'test update',
           state: models.IncidentStates.LIVE,
           tags: incident.tags.concat('911'),
           incidentTarget: undefined,
@@ -189,7 +189,7 @@ describe('Mongoose.Incident', function () {
         //});
         var updates = {
           //description: 'test update',
-          description: c.sentence(),
+          details: c.sentence(),
           state: models.IncidentStates.LIVE,
           tags: incident.tags.concat('911' + n),
           //incidentTarget: undefined,

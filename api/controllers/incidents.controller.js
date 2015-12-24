@@ -94,7 +94,7 @@ IncidentController.prototype.post = function (req, res, next) {
   var statusCode = 201;
   var jsonResult = null;
   var incident = req.body;
-  //console.debug(util.inspect(Incident));
+  //console.log(util.inspect(incident));
   var newIncident = new _IncidentModel(incident);
   res.setHeader('Content-Type', 'application/json');
 ///TODO: validate incoming object meets min requirements.

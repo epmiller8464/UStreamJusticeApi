@@ -10,7 +10,7 @@ module.exports = function (mongoose) {
         state: {type: String},
         loc: {type: mongoose.Schema.Types.ObjectId, ref: 'incidentLocation'},
         categoryType: {type: String, trim: true, uppercase: true},
-        incidentDate: {type: Date},
+        incidentDate: {type: Number},
         hammertime: {type: Number},
         endHammertime: {type: Number},
         lastModified: {type: Number},
@@ -18,7 +18,7 @@ module.exports = function (mongoose) {
         sourceType: {type: String},
         incidentTarget: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
         tags: {type: [String], index: true}, // field level
-        description: {type: String, trim: true},
+        details: {type: String, trim: true},
         mediaBundleSchema: {type: mongoose.Schema.Types.ObjectId, ref: 'mediaBundle'},
         snapshotTime: {type: Number, required: true, default: Date.now()},
         incidentId: {type: mongoose.Schema.Types.ObjectId, ref: 'incident', required: true}
@@ -30,7 +30,7 @@ module.exports = function (mongoose) {
   incidentSnapshotSchema.index({incidentId: 1});
   incidentSnapshotSchema.index({categoryType: 'text'});
   incidentSnapshotSchema.index({tags: 'text'});
-  incidentSnapshotSchema.index({description: 'text'});
+  incidentSnapshotSchema.index({details: 'text'});
   incidentSnapshotSchema.index({sourceIdentity: 1}, {sparse: true});
   incidentSnapshotSchema.index({incidentTarget: 1}, {sparse: true});
 
